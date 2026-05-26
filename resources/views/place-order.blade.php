@@ -164,6 +164,7 @@
                                     </div>
                                     <p class="text-xs text-gray-400 mt-2">We'll send a 6-digit verification code to this
                                         email.</p>
+                                    <p id="email-error" class="text-xs text-red-500 mt-1 hidden"></p>
                                 </div>
                             </div>
 
@@ -187,6 +188,7 @@
                                         <p class="text-xs text-gray-400" id="otp-timer">Expires in <span
                                                 class="font-semibold text-[#1a3c2e]" id="otp-countdown">05:00</span></p>
                                     </div>
+                                    <p id="otp-error" class="text-xs text-red-500 mt-1 hidden"></p>
                                     <button type="button" id="verifyOtpBtn" onclick="handleVerifyOtp()"
                                         class="mt-4 w-full py-3.5 bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white font-semibold rounded-xl transition-all duration-300 shadow-sm hover:shadow-md">
                                         Verify OTP
@@ -218,6 +220,36 @@
                                             placeholder="+65 9123 4567">
                                     </div>
                                 </div>
+                                <p id="personal-error" class="text-xs text-red-500 mt-1 hidden"></p>
+                            </div>
+                        </div>
+
+                        {{-- Confirmation Modal (before placing order) --}}
+                        <div id="confirmOrderModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+                            <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+                                <div class="p-8 text-center">
+                                    <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-[#1a3c2e]/10 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-[#1a3c2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Confirm Order</h3>
+                                    <p class="text-gray-600 leading-relaxed mb-6">
+                                        Are you sure you want to place this order?<br>
+                                        <span class="font-semibold text-[#1a3c2e]">Total: ${{ $total }}</span>
+                                    </p>
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <button onclick="closeConfirmModal()"
+                                            class="flex-1 py-3.5 border-2 border-gray-200 hover:border-gray-300 rounded-xl font-medium text-gray-600 hover:text-gray-800 transition-all duration-300">
+                                            Cancel
+                                        </button>
+                                        <button onclick="submitOrder()" id="confirmOrderBtn"
+                                            class="flex-1 py-3.5 bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+                                            Confirm Order
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -227,7 +259,7 @@
                                 class="w-full sm:w-auto text-center py-4 px-10 border-2 border-[#1a3c2e]/20 hover:border-[#1a3c2e] rounded-xl font-medium text-gray-600 hover:text-[#1a3c2e] hover:bg-[#1a3c2e]/[0.02] transition-all duration-300">
                                 ← Back to Customize
                             </a>
-                            <button type="button" id="placeOrderBtn" onclick="placeOrder()" disabled
+                            <button type="button" id="placeOrderBtn" onclick="showConfirmModal()" disabled
                                 class="w-full sm:flex-1 py-4 px-10 bg-gray-300 text-gray-500 rounded-xl font-semibold transition-all duration-300 cursor-not-allowed">
                                 Please complete your information
                             </button>
@@ -266,7 +298,56 @@
     </div>
 
     {{-- ============================================================
-    SUCCESS MODAL (after order placed)
+    OTP RESENT SUCCESS MODAL
+    ============================================================ --}}
+    <div id="otpResentModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95"
+            id="otpResentModalContent">
+            <div class="p-10 text-center">
+                <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">OTP Resent Successfully!</h3>
+                <p class="text-gray-600 leading-relaxed mb-6">
+                    A new 6-digit verification code has been sent to <span class="font-semibold text-[#1a3c2e]" id="resent-email-display">your@email.com</span>
+                </p>
+                <button onclick="closeOtpResentModal()"
+                    class="w-full bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+                    Got It
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- ============================================================
+    INVALID OTP MODAL
+    ============================================================ --}}
+    <div id="invalidOtpModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+            <div class="p-10 text-center">
+                <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">Invalid OTP</h3>
+                <p class="text-gray-600 leading-relaxed mb-6">
+                    The OTP you entered is invalid or has expired. Please try again.
+                </p>
+                <button onclick="closeInvalidOtpModal()"
+                    class="w-full bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- ============================================================
+    SUCCESS MODAL (after order placed) - NOT CLOSEABLE OUTSIDE
     ============================================================ --}}
     <div id="successModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
         <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
@@ -277,14 +358,14 @@
                     </svg>
                 </div>
                 <h3 class="text-3xl font-bold text-gray-900 mb-4">Order Placed Successfully!</h3>
-                <p class="text-gray-600 leading-relaxed mb-8">
-                    Please check your email for order confirmation.<br>
-                    Download your receipt below.
+                <p class="text-gray-600 leading-relaxed mb-4">
+                    Your order has been placed. Please check your email for confirmation.
                 </p>
-                <button onclick="downloadReceipt()"
-                    class="w-full bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
-                    Download Receipt
-                </button>
+                <p class="text-sm text-gray-500 mb-8" id="success-order-no"></p>
+                <a href="/"
+                    class="inline-block w-full bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md text-center">
+                    Back to Homepage
+                </a>
             </div>
         </div>
     </div>
@@ -308,6 +389,7 @@
                     otpCode: '',
                     timerInterval: null,
                     countdown: 300, // 5 minutes in seconds
+                    customerId: null,
                 };
 
                 // ============================================================
@@ -332,6 +414,45 @@
                 const emailInput = document.getElementById('email');
                 const nameInput = document.getElementById('name');
                 const contactInput = document.getElementById('contact');
+                const emailError = document.getElementById('email-error');
+                const otpError = document.getElementById('otp-error');
+                const personalError = document.getElementById('personal-error');
+
+                // ============================================================
+                // CSRF TOKEN HELPER
+                // ============================================================
+                function getCsrfToken() {
+                    return document.querySelector('input[name="_token"]').value;
+                }
+
+                // ============================================================
+                // AJAX HELPER
+                // ============================================================
+                function ajaxPost(url, data, onSuccess, onError) {
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': getCsrfToken(),
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                    .then(function(response) {
+                        return response.json().then(function(json) {
+                            if (!response.ok) {
+                                throw { status: response.status, body: json };
+                            }
+                            return json;
+                        });
+                    })
+                    .then(function(json) {
+                        if (onSuccess) onSuccess(json);
+                    })
+                    .catch(function(err) {
+                        if (onError) onError(err);
+                    });
+                }
 
                 // ============================================================
                 // STEP INDICATOR UPDATES
@@ -388,7 +509,7 @@
                 }
 
                 // ============================================================
-                // HANDLE VERIFY EMAIL
+                // HANDLE VERIFY EMAIL - Send OTP via AJAX
                 // ============================================================
                 window.handleVerifyEmail = function() {
                     const email = emailInput.value.trim();
@@ -396,26 +517,47 @@
                     // Basic email validation
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!email) {
-                        alert('Please enter your email address first.');
+                        showError(emailError, 'Please enter your email address first.');
                         return;
                     }
                     if (!emailRegex.test(email)) {
-                        alert('Please enter a valid email address.');
+                        showError(emailError, 'Please enter a valid email address.');
                         return;
                     }
 
-                    state.email = email;
-                    state.otpSent = true;
-                    otpEmailDisplay.textContent = email;
-                    modalEmailDisplay.textContent = email;
+                    hideError(emailError);
 
-                    // Show OTP sent modal
-                    const modal = document.getElementById('otpSentModal');
-                    modal.classList.remove('hidden');
-                    setTimeout(function() {
-                        const content = document.getElementById('otpModalContent');
-                        if (content) content.classList.remove('scale-95');
-                    }, 10);
+                    // Disable button and show loading
+                    verifyEmailBtn.disabled = true;
+                    verifyEmailBtn.textContent = 'Sending...';
+                    verifyEmailBtn.classList.add('opacity-60', 'cursor-not-allowed');
+
+                    state.email = email;
+
+                    ajaxPost(
+                        '{{ route("order.sendOtp") }}',
+                        { email: email },
+                        function(response) {
+                            // Success - show OTP sent modal
+                            verifyEmailBtn.textContent = 'Verify';
+                            state.otpSent = true;
+                            otpEmailDisplay.textContent = email;
+                            modalEmailDisplay.textContent = email;
+
+                            const modal = document.getElementById('otpSentModal');
+                            modal.classList.remove('hidden');
+                            setTimeout(function() {
+                                const content = document.getElementById('otpModalContent');
+                                if (content) content.classList.remove('scale-95');
+                            }, 10);
+                        },
+                        function(error) {
+                            verifyEmailBtn.disabled = false;
+                            verifyEmailBtn.textContent = 'Verify';
+                            verifyEmailBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+                            showError(emailError, error.body && error.body.message ? error.body.message : 'Failed to send OTP. Please try again.');
+                        }
+                    );
                 };
 
                 // ============================================================
@@ -495,7 +637,7 @@
                 });
 
                 // ============================================================
-                // HANDLE VERIFY OTP
+                // HANDLE VERIFY OTP - Verify via AJAX
                 // ============================================================
                 window.handleVerifyOtp = function() {
                     let code = '';
@@ -504,97 +646,229 @@
                     });
 
                     if (code.length !== 6) {
-                        alert('Please enter the complete 6-digit OTP code.');
+                        showError(otpError, 'Please enter the complete 6-digit OTP code.');
                         return;
                     }
 
-                    // In a real app, this would verify against the server
-                    // For demo, any 6-digit code works
-                    state.otpVerified = true;
-                    state.otpCode = code;
+                    hideError(otpError);
 
-                    // Stop timer
-                    if (state.timerInterval) {
-                        clearInterval(state.timerInterval);
-                        state.timerInterval = null;
-                    }
-
-                    // Show step 3
-                    step3.classList.remove('hidden');
-                    updateStepIndicator(3);
-
-                    // Enable place order button
-                    placeOrderBtn.disabled = false;
-                    placeOrderBtn.className =
-                        'w-full sm:flex-1 py-4 px-10 bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md';
-                    placeOrderBtn.textContent = 'Place Order — ${{ $total }}';
-
-                    // Disable OTP inputs
-                    otpInputs.forEach(function(inp) {
-                        inp.disabled = true;
-                        inp.classList.add('bg-gray-100', 'cursor-not-allowed');
-                    });
+                    // Disable button
                     verifyOtpBtn.disabled = true;
+                    verifyOtpBtn.textContent = 'Verifying...';
                     verifyOtpBtn.classList.add('opacity-60', 'cursor-not-allowed');
 
-                    // Show success on OTP button
-                    verifyOtpBtn.textContent = '✓ Verified';
-                    verifyOtpBtn.className =
-                        'mt-4 w-full py-3.5 bg-green-600 text-white font-semibold rounded-xl transition-all duration-300';
+                    ajaxPost(
+                        '{{ route("order.verifyOtp") }}',
+                        {
+                            email: state.email,
+                            otp: code,
+                        },
+                        function(response) {
+                            // OTP verified successfully
+                            state.otpVerified = true;
+                            state.customerId = response.customer_id;
 
-                    // Focus name field
-                    if (nameInput) nameInput.focus();
+                            // Stop timer
+                            if (state.timerInterval) {
+                                clearInterval(state.timerInterval);
+                                state.timerInterval = null;
+                            }
+
+                            // Show step 3
+                            step3.classList.remove('hidden');
+                            updateStepIndicator(3);
+
+                            // Enable place order button
+                            placeOrderBtn.disabled = false;
+                            placeOrderBtn.className =
+                                'w-full sm:flex-1 py-4 px-10 bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md';
+                            placeOrderBtn.textContent = 'Place Order — ${{ $total }}';
+
+                            // Disable OTP inputs
+                            otpInputs.forEach(function(inp) {
+                                inp.disabled = true;
+                                inp.classList.add('bg-gray-100', 'cursor-not-allowed');
+                            });
+                            verifyOtpBtn.disabled = true;
+                            verifyOtpBtn.classList.add('opacity-60', 'cursor-not-allowed');
+
+                            // Show success on OTP button
+                            verifyOtpBtn.textContent = '✓ Verified';
+                            verifyOtpBtn.className =
+                                'mt-4 w-full py-3.5 bg-green-600 text-white font-semibold rounded-xl transition-all duration-300';
+
+                            // Focus name field
+                            if (nameInput) nameInput.focus();
+                        },
+                        function(error) {
+                            // OTP invalid or expired
+                            verifyOtpBtn.disabled = false;
+                            verifyOtpBtn.textContent = 'Verify OTP';
+                            verifyOtpBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+
+                            // Show invalid OTP modal
+                            document.getElementById('invalidOtpModal').classList.remove('hidden');
+
+                            // Clear OTP inputs
+                            otpInputs.forEach(function(inp) {
+                                inp.value = '';
+                            });
+                            state.otpCode = '';
+                            if (otpInputs.length > 0) otpInputs[0].focus();
+                        }
+                    );
                 };
 
                 // ============================================================
-                // RESEND OTP
+                // CLOSE INVALID OTP MODAL
+                // ============================================================
+                window.closeInvalidOtpModal = function() {
+                    document.getElementById('invalidOtpModal').classList.add('hidden');
+                };
+
+                // ============================================================
+                // RESEND OTP - via AJAX
                 // ============================================================
                 window.resendOtp = function() {
                     if (!state.email) return;
-                    alert('A new OTP has been sent to ' + state.email);
-                    // Clear OTP inputs
-                    otpInputs.forEach(function(inp) {
-                        inp.value = '';
-                    });
-                    state.otpCode = '';
-                    if (otpInputs.length > 0) otpInputs[0].focus();
-                    startOtpTimer();
+
+                    const resendBtns = document.querySelectorAll('button[onclick="resendOtp()"]');
+                    const resendBtn = resendBtns.length > 0 ? resendBtns[0] : null;
+                    if (resendBtn) {
+                        resendBtn.disabled = true;
+                        resendBtn.textContent = 'Sending...';
+                    }
+
+                    ajaxPost(
+                        '{{ route("order.resendOtp") }}',
+                        { email: state.email },
+                        function(response) {
+                            if (resendBtn) {
+                                resendBtn.disabled = false;
+                                resendBtn.textContent = 'Resend';
+                            }
+
+                            // Clear OTP inputs
+                            otpInputs.forEach(function(inp) {
+                                inp.value = '';
+                            });
+                            state.otpCode = '';
+                            if (otpInputs.length > 0) otpInputs[0].focus();
+                            startOtpTimer();
+
+                            // Show resent success modal
+                            document.getElementById('resent-email-display').textContent = state.email;
+                            const modal = document.getElementById('otpResentModal');
+                            modal.classList.remove('hidden');
+                            setTimeout(function() {
+                                const content = document.getElementById('otpResentModalContent');
+                                if (content) content.classList.remove('scale-95');
+                            }, 10);
+                        },
+                        function(error) {
+                            if (resendBtn) {
+                                resendBtn.disabled = false;
+                                resendBtn.textContent = 'Resend';
+                            }
+                            showError(otpError, error.body && error.body.message ? error.body.message : 'Failed to resend OTP.');
+                        }
+                    );
                 };
 
                 // ============================================================
-                // PLACE ORDER
+                // CLOSE OTP RESENT MODAL
                 // ============================================================
-                window.placeOrder = function() {
+                window.closeOtpResentModal = function() {
+                    const modal = document.getElementById('otpResentModal');
+                    modal.classList.add('hidden');
+                };
+
+                // ============================================================
+                // SHOW CONFIRM MODAL (before placing order)
+                // ============================================================
+                window.showConfirmModal = function() {
                     const name = nameInput.value.trim();
                     const contact = contactInput.value.trim();
 
                     if (!name) {
-                        alert('Please enter your full name.');
+                        showError(personalError, 'Please enter your full name.');
                         nameInput.focus();
                         return;
                     }
                     if (!contact) {
-                        alert('Please enter your contact number.');
+                        showError(personalError, 'Please enter your contact number.');
                         contactInput.focus();
                         return;
                     }
-                    if (!state.emailVerified && !state.otpVerified) {
-                        alert('Please verify your email address first.');
+                    if (!state.otpVerified) {
+                        showError(personalError, 'Please verify your email address first.');
                         return;
                     }
 
-                    // Show success modal
-                    const modal = document.getElementById('successModal');
-                    modal.classList.remove('hidden');
+                    hideError(personalError);
+
+                    // Show confirmation modal
+                    document.getElementById('confirmOrderModal').classList.remove('hidden');
                 };
 
                 // ============================================================
-                // DOWNLOAD RECEIPT
+                // CLOSE CONFIRM MODAL
                 // ============================================================
-                window.downloadReceipt = function() {
-                    alert('📄 Receipt downloaded successfully! (Demo)');
-                    // In real implementation: window.location.href = '/receipt/download';
+                window.closeConfirmModal = function() {
+                    document.getElementById('confirmOrderModal').classList.add('hidden');
                 };
+
+                // ============================================================
+                // SUBMIT ORDER - via AJAX with DB transaction
+                // ============================================================
+                window.submitOrder = function() {
+                    const confirmBtn = document.getElementById('confirmOrderBtn');
+                    confirmBtn.disabled = true;
+                    confirmBtn.textContent = 'Placing Order...';
+
+                    ajaxPost(
+                        '{{ route("order.store") }}',
+                        {
+                            email: state.email,
+                            name: nameInput.value.trim(),
+                            contact: contactInput.value.trim(),
+                            frame_id: {{ $frameId ?? 'null' }},
+                            lens_id: {{ $lensId ?? 'null' }},
+                            accessory_id: {{ $accessoryId ?? 'null' }},
+                        },
+                        function(response) {
+                            // Success - close confirm modal, show success modal
+                            document.getElementById('confirmOrderModal').classList.add('hidden');
+
+                            const successModal = document.getElementById('successModal');
+                            document.getElementById('success-order-no').textContent = 'Order #' + response.order_no;
+                            successModal.classList.remove('hidden');
+                        },
+                        function(error) {
+                            confirmBtn.disabled = false;
+                            confirmBtn.textContent = 'Confirm Order';
+                            showError(personalError, error.body && error.body.message ? error.body.message : 'Failed to place order. Please try again.');
+                            document.getElementById('confirmOrderModal').classList.add('hidden');
+                        }
+                    );
+                };
+
+                // ============================================================
+                // ERROR DISPLAY HELPERS
+                // ============================================================
+                function showError(element, message) {
+                    if (element) {
+                        element.textContent = message;
+                        element.classList.remove('hidden');
+                    }
+                }
+
+                function hideError(element) {
+                    if (element) {
+                        element.classList.add('hidden');
+                        element.textContent = '';
+                    }
+                }
 
                 // ============================================================
                 // MODAL CLOSE ON BACKGROUND CLICK
@@ -605,11 +879,19 @@
                     }
                 });
 
-                document.getElementById('successModal').addEventListener('click', function(e) {
+                document.getElementById('invalidOtpModal').addEventListener('click', function(e) {
                     if (e.target === this) {
-                        this.classList.add('hidden');
+                        // Don't close on background click, user must click "Try Again"
                     }
                 });
+
+                document.getElementById('confirmOrderModal').addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        // Don't close on background click
+                    }
+                });
+
+                // Success modal - NOT closeable outside (no background click handler)
 
                 // ============================================================
                 // SCROLL REVEAL ANIMATIONS

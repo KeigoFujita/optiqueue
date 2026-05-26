@@ -2,8 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmationMail;
+use App\Mail\OtpMail;
+use App\Models\Customer;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -37,6 +45,227 @@ class CheckoutController extends Controller
             'lensPrice' => $lensPrice,
             'accessoryPrice' => $accessoryPrice,
             'total' => $total,
+            'frameId' => $frameId,
+            'lensId' => $lensId,
+            'accessoryId' => $accessoryId,
         ]);
+    }
+
+    /**
+     * Send OTP to the given email.
+     * Creates a new customer or updates existing one with a fresh OTP.
+     */
+    public function sendOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $email = $request->input('email');
+        $otp = Customer::generateOtp();
+
+        // Find or create customer by email
+        $customer = Customer::firstOrNew(['email' => $email]);
+        $customer->otp = $otp;
+        $customer->otp_expires_at = now()->addMinutes(5);
+        $customer->save();
+
+        // Send OTP via email using Mailtrap/SMTP
+        try {
+            Mail::to($email)->send(new OtpMail($otp, $customer->name ?? 'Valued Customer'));
+        } catch (\Exception $e) {
+            Log::error('Failed to send OTP email: '.$e->getMessage());
+        }
+
+        Log::info("OTP for {$email}: {$otp}");
+
+        return response()->json([
+            'success' => true,
+            'message' => 'OTP sent successfully.',
+        ]);
+    }
+
+    /**
+     * Resend a new OTP to the customer's email.
+     */
+    public function resendOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $email = $request->input('email');
+        $customer = Customer::where('email', $email)->first();
+
+        if (! $customer) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email not found. Please verify your email first.',
+            ], 404);
+        }
+
+        $otp = Customer::generateOtp();
+        $customer->otp = $otp;
+        $customer->otp_expires_at = now()->addMinutes(5);
+        $customer->save();
+
+        // Send OTP via email using Mailtrap/SMTP
+        try {
+            Mail::to($email)->send(new OtpMail($otp, $customer->name ?? 'Valued Customer'));
+        } catch (\Exception $e) {
+            Log::error('Failed to resend OTP email: '.$e->getMessage());
+        }
+
+        Log::info("OTP resent for {$email}: {$otp}");
+
+        return response()->json([
+            'success' => true,
+            'message' => 'New OTP sent successfully.',
+        ]);
+    }
+
+    /**
+     * Verify the OTP entered by the customer.
+     * If valid, update verified_at timestamp.
+     */
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|string|size:6',
+        ]);
+
+        $email = $request->input('email');
+        $otp = $request->input('otp');
+
+        $customer = Customer::where('email', $email)->first();
+
+        if (! $customer) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email not found.',
+            ], 404);
+        }
+
+        if (! $customer->isValidOtp($otp)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid OTP. Please try again.',
+            ], 422);
+        }
+
+        // Mark email as verified
+        $customer->verified_at = now();
+        $customer->otp = null;        // clear OTP after successful verification
+        $customer->otp_expires_at = null;
+        $customer->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'OTP verified successfully.',
+            'customer_id' => $customer->id,
+        ]);
+    }
+
+    public function storeOrder(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'name' => 'required|string|max:255',
+            'contact' => 'required|string|max:20',
+            'frame_id' => 'nullable|integer|exists:products,id',
+            'lens_id' => 'nullable|integer|exists:products,id',
+            'accessory_id' => 'nullable|integer|exists:products,id',
+        ]);
+
+        $email = $request->input('email');
+        $name = $request->input('name');
+        $contact = $request->input('contact');
+        $frameId = $request->input('frame_id');
+        $lensId = $request->input('lens_id');
+        $accessoryId = $request->input('accessory_id');
+
+        // Begin database transaction
+        try {
+            DB::beginTransaction();
+
+            // 1. Find or create customer and update their info
+            $customer = Customer::where('email', $email)->firstOrFail();
+
+            // Ensure customer is verified
+            if (! $customer->verified_at) {
+                DB::rollBack();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email not verified. Please verify your email first.',
+                ], 422);
+            }
+
+            $customer->name = $name;
+            $customer->phone_number = $contact;
+            $customer->save();
+
+            // 2. Calculate total amount
+            $framePrice = $frameId ? (int) Product::find($frameId)->price : 0;
+            $lensPrice = $lensId ? (int) Product::find($lensId)->price : 0;
+            $accessoryPrice = $accessoryId ? (int) Product::find($accessoryId)->price : 0;
+            $totalAmount = $framePrice + $lensPrice + $accessoryPrice;
+
+            // 3. Create order
+            $orderNo = 'ORD-'.strtoupper(uniqid());
+            $order = Order::create([
+                'order_no' => $orderNo,
+                'customer_id' => $customer->id,
+                'total_amount' => $totalAmount,
+                'status' => 'pending',
+            ]);
+
+            // 4. Create order details for each product
+            $products = [];
+
+            if ($frameId) {
+                $products[] = ['product_id' => $frameId, 'quantity' => 1];
+            }
+            if ($lensId) {
+                $products[] = ['product_id' => $lensId, 'quantity' => 1];
+            }
+            if ($accessoryId) {
+                $products[] = ['product_id' => $accessoryId, 'quantity' => 1];
+            }
+
+            foreach ($products as $item) {
+                OrderDetail::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                ]);
+            }
+
+            DB::commit();
+
+            // Send order confirmation email
+            try {
+                $order->load('customer', 'orderDetails.product');
+                Mail::to($order->customer->email)->send(new OrderConfirmationMail($order));
+            } catch (\Exception $e) {
+                Log::error('Failed to send order confirmation email: '.$e->getMessage());
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order placed successfully!',
+                'order_no' => $orderNo,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Order placement failed: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to place order. Please try again.',
+            ], 500);
+        }
     }
 }

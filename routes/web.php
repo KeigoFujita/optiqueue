@@ -34,7 +34,13 @@ Route::get('/checkout', function () {
     ]);
 });
 
-Route::get('/order', [CheckoutController::class, 'placeOrder']);
+Route::get('/order', [CheckoutController::class, 'placeOrder'])->name('order.place');
+
+// ─── AJAX / Order Routes ────────────────────────────────────────────
+Route::post('/order/send-otp', [CheckoutController::class, 'sendOtp'])->name('order.sendOtp');
+Route::post('/order/resend-otp', [CheckoutController::class, 'resendOtp'])->name('order.resendOtp');
+Route::post('/order/verify-otp', [CheckoutController::class, 'verifyOtp'])->name('order.verifyOtp');
+Route::post('/order/store', [CheckoutController::class, 'storeOrder'])->name('order.store');
 
 Route::get('/framedetail', function () {
     return view('framedetail');
