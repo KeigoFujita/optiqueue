@@ -10,36 +10,33 @@
 @endsection
 
 @section('header-actions')
-    <div class="flex items-center gap-3">
-        <div class="relative">
-            <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" id="searchInput" placeholder="Search ticket no..."
-                class="admin-input !w-56 !py-2 !pl-9 !pr-3 !text-sm !rounded-xl bg-gray-50">
-        </div>
-        <button class="btn-ghost !py-2 !px-3 !text-xs">
-            <i class="fa-solid fa-filter"></i>
-            <span class="hidden sm:inline">Filter</span>
-        </button>
-        <button class="btn-dark !py-2 !px-4 !text-xs">
-            <i class="fa-solid fa-arrow-down"></i>
-            <span class="hidden sm:inline">Export</span>
-        </button>
-    </div>
+    {{-- Removed filter/export buttons per requirements --}}
 @endsection
 
 @section('content')
     <div class="p-6 lg:p-8 space-y-6">
 
         <!-- Orders Overview Stats -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 stagger-children">
             <div class="admin-card p-4 lg:p-5">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
                         <i class="fa-solid fa-receipt text-blue-600"></i>
                     </div>
                     <div>
-                        <div class="text-lg font-bold text-gray-900">1,284</div>
+                        <div class="text-lg font-bold text-gray-900">{{ number_format($totalOrders) }}</div>
                         <div class="text-xs text-gray-500">Total Orders</div>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-card p-4 lg:p-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                        <i class="fa-solid fa-hourglass-half text-purple-600"></i>
+                    </div>
+                    <div>
+                        <div class="text-lg font-bold text-gray-900">{{ number_format($pendingCount) }}</div>
+                        <div class="text-xs text-gray-500">Pending</div>
                     </div>
                 </div>
             </div>
@@ -49,7 +46,7 @@
                         <i class="fa-solid fa-gear text-amber-600"></i>
                     </div>
                     <div>
-                        <div class="text-lg font-bold text-gray-900">342</div>
+                        <div class="text-lg font-bold text-gray-900">{{ number_format($processingCount) }}</div>
                         <div class="text-xs text-gray-500">Processing</div>
                     </div>
                 </div>
@@ -60,7 +57,7 @@
                         <i class="fa-solid fa-check-circle text-green-600"></i>
                     </div>
                     <div>
-                        <div class="text-lg font-bold text-gray-900">128</div>
+                        <div class="text-lg font-bold text-gray-900">{{ number_format($readyCount) }}</div>
                         <div class="text-xs text-gray-500">Ready for Pickup</div>
                     </div>
                 </div>
@@ -71,35 +68,46 @@
                         <i class="fa-solid fa-box text-gray-600"></i>
                     </div>
                     <div>
-                        <div class="text-lg font-bold text-gray-900">814</div>
+                        <div class="text-lg font-bold text-gray-900">{{ number_format($pickedUpCount) }}</div>
                         <div class="text-xs text-gray-500">Picked Up</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Status Filter Tabs -->
-        <div class="flex flex-wrap gap-2">
-            <button
-                class="status-filter active px-4 py-2 rounded-xl bg-[#0F3D2A] text-white text-xs font-semibold transition-all">
-                All Orders
-            </button>
-            <button
-                class="status-filter px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-all">
-                Processing
-            </button>
-            <button
-                class="status-filter px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-all">
-                Ready
-            </button>
-            <button
-                class="status-filter px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-all">
-                Picked Up
-            </button>
-            <button
-                class="status-filter px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-all">
-                Cancelled
-            </button>
+        <!-- Search + Status Filter Tabs -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <!-- Status Filter Tabs -->
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.orders', array_merge(request()->except('status', 'page'), ['status' => 'all'])) }}"
+                    class="status-filter px-4 py-2 rounded-xl text-xs font-semibold transition-all {{ !request('status') || request('status') === 'all' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    All Orders
+                </a>
+                <a href="{{ route('admin.orders', array_merge(request()->except('status', 'page'), ['status' => 'processing'])) }}"
+                    class="status-filter px-4 py-2 rounded-xl text-xs font-medium transition-all {{ request('status') === 'processing' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    Processing
+                </a>
+                <a href="{{ route('admin.orders', array_merge(request()->except('status', 'page'), ['status' => 'ready'])) }}"
+                    class="status-filter px-4 py-2 rounded-xl text-xs font-medium transition-all {{ request('status') === 'ready' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    Ready
+                </a>
+                <a href="{{ route('admin.orders', array_merge(request()->except('status', 'page'), ['status' => 'picked-up'])) }}"
+                    class="status-filter px-4 py-2 rounded-xl text-xs font-medium transition-all {{ request('status') === 'picked-up' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    Picked Up
+                </a>
+                <a href="{{ route('admin.orders', array_merge(request()->except('status', 'page'), ['status' => 'cancelled'])) }}"
+                    class="status-filter px-4 py-2 rounded-xl text-xs font-medium transition-all {{ request('status') === 'cancelled' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    Cancelled
+                </a>
+            </div>
+
+            <!-- Search (moved to right side above table) -->
+            <div class="relative sm:w-64">
+                <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="Search by name, email, or ticket no..."
+                    value="{{ request('search') }}"
+                    class="admin-input !w-full !py-2 !pl-9 !pr-3 !text-sm !rounded-xl bg-gray-50">
+            </div>
         </div>
 
         <!-- Orders Table -->
@@ -117,101 +125,116 @@
                         </tr>
                     </thead>
                     <tbody id="ordersTable">
-                        @foreach (range(1, 8) as $i)
+                        @forelse ($orders as $order)
                             @php
-                                $statuses = ['processing', 'ready', 'picked-up', 'cancelled'];
-                                $status = $statuses[$i % 4];
-                                $amounts = [248, 186, 324, 159, 412, 275, 198, 350];
+                                $status = $order->status;
                                 $isTerminal = in_array($status, ['picked-up', 'cancelled']);
+                                $badgeClass = match($status) {
+                                    'ready' => 'badge-success',
+                                    'processing' => 'badge-info',
+                                    'pending' => 'badge-warning',
+                                    'picked-up' => 'badge-neutral',
+                                    'cancelled' => 'badge-danger',
+                                    default => 'badge-info',
+                                };
+                                $dotClass = match($status) {
+                                    'ready' => 'bg-green-500',
+                                    'processing' => 'bg-blue-500',
+                                    'pending' => 'bg-yellow-500',
+                                    'picked-up' => 'bg-gray-500',
+                                    'cancelled' => 'bg-red-500',
+                                    default => 'bg-blue-500',
+                                };
+                                $statusLabel = $statusLabels[$status] ?? ucfirst($status);
                             @endphp
-                            <tr class="order-row" data-status="{{ $status }}">
+                            <tr class="order-row" data-status="{{ $status }}" data-id="{{ $order->id }}">
                                 <td>
                                     <div class="flex items-center gap-3">
                                         <div
                                             class="w-8 h-8 rounded-full bg-gradient-to-br from-[#0F3D2A] to-[#1a5c3e] flex items-center justify-center text-white text-xs font-bold">
-                                            {{ substr('Customer ' . $i, 0, 2) }}
+                                            {{ substr($order->customer->name ?? '?', 0, 2) }}
                                         </div>
-                                        <span class="font-medium text-gray-900">Customer {{ $i }}</span>
+                                        <span class="font-medium text-gray-900">{{ $order->customer->name ?? 'Unknown' }}</span>
                                     </div>
                                 </td>
-                                <td class="text-gray-500">customer{{ $i }}@example.com</td>
-                                <td class="font-mono text-sm text-gray-700">0954{{ 400 + $i }}</td>
-                                <td class="font-semibold text-gray-900">${{ $amounts[$i - 1] }}.00</td>
+                                <td class="text-gray-500">{{ $order->customer->email }}</td>
+                                <td class="font-mono text-sm text-gray-700">{{ $order->order_no }}</td>
+                                <td class="font-semibold text-gray-900">${{ number_format($order->total_amount, 2) }}</td>
                                 <td>
-                                    <span
-                                        class="status-badge badge
-                                        badge-{{ $status === 'ready' ? 'success' : ($status === 'processing' ? 'info' : ($status === 'picked-up' ? 'neutral' : 'danger')) }}">
-                                        <span
-                                            class="w-1.5 h-1.5 rounded-full
-                                            {{ $status === 'ready' ? 'bg-green-500' : ($status === 'processing' ? 'bg-blue-500' : ($status === 'picked-up' ? 'bg-gray-500' : 'bg-red-500')) }}">
-                                        </span>
-                                        <span class="status-text">{{ ucfirst($status) }}</span>
+                                    <span class="status-badge badge {{ $badgeClass }}">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $dotClass }}"></span>
+                                        <span class="status-text">{{ $statusLabel }}</span>
                                     </span>
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2 actions-cell">
-                                        @if ($isTerminal)
-                                            <div
-                                                class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-xs font-medium">
-                                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                                <span>Final —
-                                                    {{ $status === 'picked-up' ? 'Picked Up' : 'Cancelled' }}</span>
-                                            </div>
-                                        @else
-                                            <button onclick="showOrderDetails({{ $i }})"
-                                                class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 text-xs font-medium transition-all">
-                                                <i class="fa-solid fa-eye mr-1"></i>View
-                                            </button>
-                                            <select onchange="updateStatus(this, {{ $i }})"
-                                                class="status-select text-xs rounded-lg px-2 py-1.5 border border-gray-200 focus:ring-1 focus:ring-[#f4d03f] cursor-pointer bg-white">
-                                                <option value="processing"
-                                                    {{ $status === 'processing' ? 'selected' : '' }}>
-                                                    Processing</option>
-                                                <option value="ready" {{ $status === 'ready' ? 'selected' : '' }}>Ready
-                                                </option>
-                                                <option value="picked-up" {{ $status === 'picked-up' ? 'selected' : '' }}>
-                                                    Picked Up</option>
-                                                <option value="cancelled" {{ $status === 'cancelled' ? 'selected' : '' }}>
-                                                    Cancelled</option>
-                                            </select>
-                                        @endif
+                                        <button onclick="openManageModal({{ $order->id }})"
+                                            class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 text-xs font-medium transition-all">
+                                            <i class="fa-solid fa-gear mr-1"></i>Manage
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-12 text-gray-400">
+                                    <i class="fa-solid fa-receipt text-3xl mb-3 block text-gray-300"></i>
+                                    <p class="text-sm font-medium">No orders found</p>
+                                    <p class="text-xs mt-1">Try adjusting your search or filter criteria.</p>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-            <!-- Table Footer -->
+
+            <!-- Table Footer / Pagination -->
             <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
-                <span>Showing 1 to 8 of 1,284 orders</span>
+                <span>
+                    Showing {{ $orders->firstItem() ?? 0 }} to {{ $orders->lastItem() ?? 0 }} of {{ $orders->total() }} orders
+                </span>
                 <div class="flex items-center gap-2">
-                    <button class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
-                        <i class="fa-solid fa-chevron-left text-[10px]"></i>
-                    </button>
-                    <span class="px-3 py-1.5 rounded-lg bg-[#0F3D2A] text-white font-medium">1</span>
-                    <button class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">2</button>
-                    <button class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">3</button>
-                    <span class="px-1">...</span>
-                    <button class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">42</button>
-                    <button class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
-                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                    </button>
+                    @if ($orders->onFirstPage())
+                        <button disabled class="px-3 py-1.5 rounded-lg bg-gray-50 text-gray-300 cursor-not-allowed">
+                            <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        </button>
+                    @else
+                        <a href="{{ $orders->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+                            <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        </a>
+                    @endif
+
+                    @foreach ($orders->getUrlRange(max(1, $orders->currentPage() - 2), min($orders->lastPage(), $orders->currentPage() + 2)) as $page => $url)
+                        <a href="{{ $url }}"
+                            class="px-3 py-1.5 rounded-lg transition-colors {{ $page === $orders->currentPage() ? 'bg-[#0F3D2A] text-white font-medium' : 'bg-gray-100 hover:bg-gray-200 text-gray-600' }}">
+                            {{ $page }}
+                        </a>
+                    @endforeach
+
+                    @if ($orders->hasMorePages())
+                        <a href="{{ $orders->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </a>
+                    @else
+                        <button disabled class="px-3 py-1.5 rounded-lg bg-gray-50 text-gray-300 cursor-not-allowed">
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Order Details Modal -->
+    <!-- Order Details / Manage Modal -->
     <div id="orderDetailsModal"
         class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all duration-300 scale-95 opacity-0"
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all duration-300 scale-95 opacity-0 max-h-[90vh] overflow-y-auto"
             id="modal-content">
             <!-- Modal Header -->
-            <div class="flex justify-between items-center border-b border-gray-100 px-6 py-4">
+            <div class="flex justify-between items-center border-b border-gray-100 px-6 py-4 sticky top-0 bg-white z-10">
                 <div class="flex items-center gap-3">
                     <h3 class="text-lg font-bold font-serif text-gray-900">Order Details</h3>
-                    <span class="badge badge-info">#095402</span>
+                    <span class="badge badge-info" id="modalOrderNo">#---</span>
                 </div>
                 <button onclick="closeModal()"
                     class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors">
@@ -221,120 +244,102 @@
 
             <!-- Modal Body -->
             <div class="p-6 space-y-6">
-                <!-- Customer Info -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="p-3 rounded-xl bg-gray-50">
-                        <p class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Order No.</p>
-                        <p class="text-sm font-semibold text-gray-900 font-mono">095402</p>
-                    </div>
-                    <div class="p-3 rounded-xl bg-gray-50">
-                        <p class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Customer</p>
-                        <p class="text-sm font-semibold text-gray-900">Sample Name</p>
-                    </div>
-                    <div class="p-3 rounded-xl bg-gray-50">
-                        <p class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Email</p>
-                        <p class="text-sm text-gray-700 truncate">sample@gmail.com</p>
-                    </div>
-                    <div class="p-3 rounded-xl bg-gray-50">
-                        <p class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Frame</p>
-                        <p class="text-sm font-semibold text-gray-900">Aurel - Burgundy</p>
-                    </div>
+                <!-- Loading State -->
+                <div id="modalLoading" class="text-center py-8">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl text-gray-400"></i>
+                    <p class="text-sm text-gray-500 mt-2">Loading order details...</p>
                 </div>
 
-                <!-- Lens Selection -->
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Lens Options</p>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                        @php
-                            $lenses = ['Blue Lens', 'Transition Lens', 'Computer Progressive', 'Ultra Thin'];
-                        @endphp
-                        @foreach ($lenses as $idx => $lens)
-                            <label
-                                class="flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50">
-                                <input type="radio" name="modal-lens" {{ $idx === 0 ? 'checked' : '' }}
-                                    class="accent-[#f4d03f]">
-                                <span class="text-sm">{{ $lens }}</span>
-                            </label>
-                        @endforeach
+                <!-- Order Content (hidden until loaded) -->
+                <div id="modalContent" class="hidden space-y-6">
+                    <!-- Customer Info -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-3 rounded-xl bg-gray-50">
+                            <p class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Order No.</p>
+                            <p class="text-sm font-semibold text-gray-900 font-mono" id="modalOrderNoValue">---</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-gray-50">
+                            <p class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Customer</p>
+                            <p class="text-sm font-semibold text-gray-900" id="modalCustomerName">---</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-gray-50">
+                            <p class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Email</p>
+                            <p class="text-sm text-gray-700 truncate" id="modalCustomerEmail">---</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-gray-50">
+                            <p class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Contact</p>
+                            <p class="text-sm font-semibold text-gray-900" id="modalCustomerPhone">---</p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Accessories -->
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Accessories</p>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                        @php
-                            $accessories = ['Default', 'Luxe Case', 'Eyeglass Chain', 'Cleaning Spray'];
-                        @endphp
-                        @foreach ($accessories as $idx => $acc)
-                            <label
-                                class="flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50">
-                                <input type="radio" name="modal-accessory" {{ $idx === 0 ? 'checked' : '' }}
-                                    class="accent-[#f4d03f]">
-                                <span class="text-sm">{{ $acc }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Total & Actions -->
-                <div class="border-t border-gray-100 pt-5 flex items-center justify-between">
+                    <!-- Date -->
                     <div>
-                        <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Total Amount</p>
-                        <p class="text-2xl font-bold text-gray-900">$248.00</p>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Date Ordered</p>
+                        <p class="text-sm text-gray-700" id="modalDate">---</p>
                     </div>
-                    <div class="flex gap-3">
-                        <button onclick="closeModal()" class="btn-ghost !py-2.5 !px-5 !text-sm">Close</button>
-                        <button class="btn-dark !py-2.5 !px-5 !text-sm">
-                            <i class="fa-solid fa-check"></i> Update Order
-                        </button>
+
+                    <!-- Items (Frame / Lens / Accessories) -->
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Order Items</p>
+                        <div class="space-y-2" id="modalItemsContainer">
+                            {{-- Populated by AJAX --}}
+                        </div>
+                    </div>
+
+                    <!-- Total & Status Management -->
+                    <div class="border-t border-gray-100 pt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Total Amount</p>
+                            <p class="text-2xl font-bold text-gray-900" id="modalTotalAmount">$0.00</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <!-- Status Dropdown -->
+                            <div class="flex items-center gap-2">
+                                <label for="modalStatusSelect" class="text-xs text-gray-500 font-medium whitespace-nowrap">Status:</label>
+                                <select id="modalStatusSelect"
+                                    class="text-sm rounded-xl px-3 py-2.5 border border-gray-200 focus:ring-1 focus:ring-[#f4d03f] cursor-pointer bg-white min-w-[140px]">
+                                    <option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="ready">Ready</option>
+                                    <option value="picked-up">Picked Up</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <button id="saveStatusBtn"
+                                class="btn-dark !py-2.5 !px-5 !text-sm whitespace-nowrap">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Pickup Confirmation Modal -->
-    <div id="pickupModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <!-- Status Change Confirmation Modal -->
+    <div id="statusConfirmModal"
+        class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[60]">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0"
-            id="pickup-modal-content">
+            id="status-confirm-modal-content">
             <div class="p-8 text-center">
-                <div class="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center mx-auto mb-5">
-                    <i class="fa-solid fa-check text-green-600 text-2xl"></i>
+                <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mx-auto mb-5">
+                    <i class="fa-solid fa-envelope-circle-check text-amber-600 text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold font-serif text-gray-900 mb-2">Mark as Ready for Pickup?</h3>
-                <p class="text-gray-500 text-sm mb-8">
-                    The customer will be notified via email. This action can be reversed.
+                <h3 class="text-xl font-bold font-serif text-gray-900 mb-2">Change Order Status?</h3>
+                <p class="text-gray-500 text-sm mb-2" id="statusConfirmMessage">
+                    This will send an email notification to the customer about the status update.
+                </p>
+                <p class="text-xs text-gray-400 mb-8">
+                    From: <span id="confirmOldStatus" class="font-semibold">---</span>
+                    → To: <span id="confirmNewStatus" class="font-semibold">---</span>
                 </p>
                 <div class="flex gap-4">
-                    <button onclick="closePickupModal()"
+                    <button onclick="closeStatusConfirmModal()"
                         class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium text-sm transition-colors">Cancel</button>
-                    <button onclick="confirmPickup()"
-                        class="flex-1 py-3 bg-[#0F3D2A] hover:bg-[#1a5c3e] text-white rounded-xl font-medium text-sm transition-colors">Confirm</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Terminal Status Confirmation Modal (Picked Up / Cancelled) -->
-    <div id="terminalConfirmModal"
-        class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0"
-            id="terminal-modal-content">
-            <div class="p-8 text-center">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5" id="terminalModalIcon">
-                    <i class="fa-solid fa-triangle-exclamation text-2xl" id="terminalModalIconEl"></i>
-                </div>
-                <h3 class="text-xl font-bold font-serif text-gray-900 mb-2" id="terminalModalTitle">Confirm Action</h3>
-                <p class="text-gray-500 text-sm mb-8" id="terminalModalMessage">
-                    This action cannot be undone. Are you sure?
-                </p>
-                <div class="flex gap-4">
-                    <button onclick="closeTerminalModal()"
-                        class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium text-sm transition-colors">Cancel</button>
-                    <button onclick="confirmTerminalAction()"
-                        class="flex-1 py-3 text-white rounded-xl font-medium text-sm transition-colors"
-                        id="terminalModalConfirmBtn">Confirm</button>
+                    <button id="confirmStatusChangeBtn"
+                        class="flex-1 py-3 bg-[#0F3D2A] hover:bg-[#1a5c3e] text-white rounded-xl font-medium text-sm transition-colors">
+                        <i class="fa-solid fa-check mr-1"></i> Confirm & Send Email
+                    </button>
                 </div>
             </div>
         </div>
@@ -342,37 +347,25 @@
 
     @push('scripts')
         <script>
+            // ── State ──────────────────────────────────────────────────────
+            let _currentOrderId = null;
+
             /**
              * Get the CSS badge class and dot color for a given status value.
              */
             function getStatusClasses(status) {
                 const map = {
-                    'processing': {
-                        badge: 'badge-info',
-                        dot: 'bg-blue-500',
-                        label: 'Processing'
-                    },
-                    'ready': {
-                        badge: 'badge-success',
-                        dot: 'bg-green-500',
-                        label: 'Ready'
-                    },
-                    'picked-up': {
-                        badge: 'badge-neutral',
-                        dot: 'bg-gray-500',
-                        label: 'Picked Up'
-                    },
-                    'cancelled': {
-                        badge: 'badge-danger',
-                        dot: 'bg-red-500',
-                        label: 'Cancelled'
-                    },
+                    'pending': { badge: 'badge-warning', dot: 'bg-yellow-500', label: 'Pending' },
+                    'processing': { badge: 'badge-info', dot: 'bg-blue-500', label: 'Processing' },
+                    'ready': { badge: 'badge-success', dot: 'bg-green-500', label: 'Ready' },
+                    'picked-up': { badge: 'badge-neutral', dot: 'bg-gray-500', label: 'Picked Up' },
+                    'cancelled': { badge: 'badge-danger', dot: 'bg-red-500', label: 'Cancelled' },
                 };
-                return map[status] || map['processing'];
+                return map[status] || map['pending'];
             }
 
             /**
-             * Update the status badge in the row's Status column to match the select value.
+             * Update the status badge in the table row.
              */
             function syncStatusBadge(row, newStatus) {
                 const badge = row.querySelector('.status-badge');
@@ -385,158 +378,91 @@
                 text.textContent = cls.label;
             }
 
-            /**
-             * Replace the actions cell with a locked "Final" warning when terminal status is reached.
-             */
-            function lockActionsCell(row, status) {
-                const actionsCell = row.querySelector('.actions-cell');
-                const label = status === 'picked-up' ? 'Picked Up' : 'Cancelled';
-                actionsCell.innerHTML = `
-                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-xs font-medium">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <span>Final — ${label}</span>
-                    </div>
-                `;
-            }
+            // ── Search with debounce + query string ───────────────────────
+            let searchTimeout = null;
+            document.getElementById('searchInput')?.addEventListener('keyup', function() {
+                clearTimeout(searchTimeout);
+                const value = this.value.trim();
+                searchTimeout = setTimeout(() => {
+                    const url = new URL(window.location.href);
+                    if (value) {
+                        url.searchParams.set('search', value);
+                    } else {
+                        url.searchParams.delete('search');
+                    }
+                    url.searchParams.delete('page');
+                    window.location.href = url.toString();
+                }, 400);
+            });
 
-            /**
-             * Shared function to finalize a terminal status change (picked-up / cancelled).
-             */
-            function applyTerminalStatus(row, id, status) {
-                syncStatusBadge(row, status);
-                lockActionsCell(row, status);
-                row.dataset.status = status;
-                const cls = getStatusClasses(status);
-                showToast(`Order #0954${400 + id} marked as ${cls.label}`, status === 'cancelled' ? 'danger' : 'success');
-            }
-
-            /**
-             * Handle status dropdown changes.
-             */
-            function updateStatus(select, id) {
-                const row = select.closest('tr');
-                const value = select.value;
-
-                // === Ready → Show pickup confirmation modal ===
-                if (value === 'ready') {
-                    const modal = document.getElementById('pickupModal');
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        document.getElementById('pickup-modal-content')
-                            .classList.remove('scale-95', 'opacity-0');
-                        document.getElementById('pickup-modal-content')
-                            .classList.add('scale-100', 'opacity-100');
-                    }, 50);
-
-                    window._pendingAction = {
-                        row,
-                        select,
-                        status: 'ready'
-                    };
-                    return;
-                }
-
-                // === Picked Up / Cancelled → Show terminal confirmation modal ===
-                if (value === 'picked-up' || value === 'cancelled') {
-                    const isCancelled = value === 'cancelled';
-                    const title = isCancelled ? 'Cancel This Order?' : 'Mark as Picked Up?';
-                    const message = isCancelled ?
-                        'This order will be cancelled and cannot be reversed. The customer will be notified.' :
-                        'This order will be marked as picked up. The status cannot be changed afterward.';
-                    const iconColor = isCancelled ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600';
-                    const icon = isCancelled ? 'fa-ban' : 'fa-box';
-                    const btnColor = isCancelled ? 'bg-red-600 hover:bg-red-700' : 'bg-amber-600 hover:bg-amber-700';
-
-                    document.getElementById('terminalModalIcon').className =
-                        'w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 ' + iconColor;
-                    document.getElementById('terminalModalIconEl').className = 'fa-solid ' + icon + ' text-2xl';
-                    document.getElementById('terminalModalTitle').textContent = title;
-                    document.getElementById('terminalModalMessage').textContent = message;
-                    document.getElementById('terminalModalConfirmBtn').className =
-                        'flex-1 py-3 text-white rounded-xl font-medium text-sm transition-colors ' + btnColor;
-
-                    const modal = document.getElementById('terminalConfirmModal');
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        document.getElementById('terminal-modal-content')
-                            .classList.remove('scale-95', 'opacity-0');
-                        document.getElementById('terminal-modal-content')
-                            .classList.add('scale-100', 'opacity-100');
-                    }, 50);
-
-                    window._pendingAction = {
-                        row,
-                        select,
-                        id,
-                        status: value
-                    };
-                    return;
-                }
-
-                // === Non-terminal status (processing) — update immediately ===
-                syncStatusBadge(row, value);
-                row.dataset.status = value;
-                showToast(`Order #0954${400 + id} updated to ${getStatusClasses(value).label}`, 'success');
-            }
-
-            /**
-             * Confirm "Ready for Pickup" from the pickup modal.
-             */
-            function confirmPickup() {
-                const pending = window._pendingAction;
-                if (!pending || pending.status !== 'ready') return;
-
-                const {
-                    row,
-                    select
-                } = pending;
-                const value = 'ready';
-                syncStatusBadge(row, value);
-                row.dataset.status = value;
-                showToast('✅ Order marked as Ready for Pickup! Email notification sent.', 'success');
-                closePickupModal();
-                window._pendingAction = null;
-            }
-
-            /**
-             * Confirm terminal action (Picked Up / Cancelled).
-             */
-            function confirmTerminalAction() {
-                const pending = window._pendingAction;
-                if (!pending) return;
-                applyTerminalStatus(pending.row, pending.id, pending.status);
-                closeTerminalModal();
-                window._pendingAction = null;
-            }
-
-            /**
-             * Confirm "Ready for Pickup".
-             */
-            function confirmPickup() {
-                const pending = window._pendingAction;
-                if (!pending || pending.status !== 'ready') return;
-
-                const {
-                    row,
-                    select
-                } = pending;
-                syncStatusBadge(row, 'ready');
-                row.dataset.status = 'ready';
-                showToast('✅ Order marked as Ready for Pickup! Email notification sent.', 'success');
-                closePickupModal();
-                window._pendingAction = null;
-            }
-
-            // ---------- Modal helpers ----------
-
-            function showOrderDetails(id) {
+            // ── Manage Modal ──────────────────────────────────────────────
+            function openManageModal(orderId) {
+                _currentOrderId = orderId;
                 const modal = document.getElementById('orderDetailsModal');
                 modal.classList.remove('hidden');
+
+                // Show loading, hide content
+                document.getElementById('modalLoading').classList.remove('hidden');
+                document.getElementById('modalContent').classList.add('hidden');
+
+                // Animate in
                 setTimeout(() => {
-                    const content = document.getElementById('modal-content');
-                    content.classList.remove('scale-95', 'opacity-0');
-                    content.classList.add('scale-100', 'opacity-100');
+                    document.getElementById('modal-content')
+                        .classList.remove('scale-95', 'opacity-0');
+                    document.getElementById('modal-content')
+                        .classList.add('scale-100', 'opacity-100');
                 }, 50);
+
+                // Fetch order details
+                fetch(`/admin/orders/${orderId}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Failed to fetch order details');
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (!data.success) throw new Error(data.message || 'Unknown error');
+                        const order = data.order;
+                        populateModal(order);
+                    })
+                    .catch(err => {
+                        showToast(err.message || 'Failed to load order details', 'danger');
+                        closeModal();
+                    });
+            }
+
+            function populateModal(order) {
+                // Order info
+                document.getElementById('modalOrderNo').textContent = '#' + order.order_no;
+                document.getElementById('modalOrderNoValue').textContent = order.order_no;
+                document.getElementById('modalCustomerName').textContent = order.customer.name;
+                document.getElementById('modalCustomerEmail').textContent = order.customer.email;
+                document.getElementById('modalCustomerPhone').textContent = order.customer.phone_number;
+                document.getElementById('modalDate').textContent = order.created_at;
+                document.getElementById('modalTotalAmount').textContent = '$' + order.total_amount;
+
+                // Items
+                document.getElementById('modalItemsContainer').innerHTML = order.items_html;
+
+                // Status dropdown
+                const statusSelect = document.getElementById('modalStatusSelect');
+                statusSelect.value = order.status;
+
+                // If terminal status, disable the dropdown
+                const isTerminal = ['picked-up', 'cancelled'].includes(order.status);
+                statusSelect.disabled = isTerminal;
+                if (isTerminal) {
+                    statusSelect.classList.add('opacity-60', 'cursor-not-allowed');
+                    document.getElementById('saveStatusBtn').disabled = true;
+                    document.getElementById('saveStatusBtn').classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    statusSelect.classList.remove('opacity-60', 'cursor-not-allowed');
+                    document.getElementById('saveStatusBtn').disabled = false;
+                    document.getElementById('saveStatusBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+
+                // Hide loading, show content
+                document.getElementById('modalLoading').classList.add('hidden');
+                document.getElementById('modalContent').classList.remove('hidden');
             }
 
             function closeModal() {
@@ -544,39 +470,129 @@
                 const content = document.getElementById('modal-content');
                 content.classList.add('scale-95', 'opacity-0');
                 content.classList.remove('scale-100', 'opacity-100');
-                setTimeout(() => modal.classList.add('hidden'), 200);
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.getElementById('modalContent').classList.add('hidden');
+                    document.getElementById('modalLoading').classList.remove('hidden');
+                }, 200);
+                _currentOrderId = null;
             }
 
-            function closePickupModal() {
-                const pending = window._pendingAction;
-                if (pending && pending.status === 'ready') {
-                    pending.select.value = pending.row.dataset.status || 'processing';
-                }
-                window._pendingAction = null;
+            // ── Save Status Change ────────────────────────────────────────
+            document.getElementById('saveStatusBtn')?.addEventListener('click', function() {
+                const statusSelect = document.getElementById('modalStatusSelect');
+                const newStatus = statusSelect.value;
+                const row = document.querySelector(`.order-row[data-id="${_currentOrderId}"]`);
+                if (!row) return;
 
-                const modal = document.getElementById('pickupModal');
-                const content = document.getElementById('pickup-modal-content');
+                const currentStatus = row.dataset.status;
+
+                // If same status, do nothing
+                if (newStatus === currentStatus) {
+                    showToast('No changes to save.', 'info');
+                    return;
+                }
+
+                // Show confirmation modal
+                const oldLabel = getStatusClasses(currentStatus).label;
+                const newLabel = getStatusClasses(newStatus).label;
+
+                document.getElementById('confirmOldStatus').textContent = oldLabel;
+                document.getElementById('confirmNewStatus').textContent = newLabel;
+                document.getElementById('statusConfirmMessage').innerHTML =
+                    'You are about to change the status from <strong>' + oldLabel + '</strong> to <strong>' + newLabel +
+                    '</strong>. An email notification will be sent to the customer.';
+
+                const confirmModal = document.getElementById('statusConfirmModal');
+                confirmModal.classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('status-confirm-modal-content')
+                        .classList.remove('scale-95', 'opacity-0');
+                    document.getElementById('status-confirm-modal-content')
+                        .classList.add('scale-100', 'opacity-100');
+                }, 50);
+
+                // Store pending action
+                window._pendingStatusChange = {
+                    orderId: _currentOrderId,
+                    newStatus: newStatus,
+                    row: row,
+                };
+            });
+
+            document.getElementById('confirmStatusChangeBtn')?.addEventListener('click', function() {
+                const pending = window._pendingStatusChange;
+                if (!pending) return;
+
+                const btn = this;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Saving...';
+
+                fetch(`/admin/orders/${pending.orderId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ status: pending.newStatus }),
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) throw new Error(data.message || 'Failed to update status');
+
+                        // Update the table row
+                        const row = pending.row;
+                        row.dataset.status = pending.newStatus;
+                        syncStatusBadge(row, pending.newStatus);
+
+                        // Update modal state
+                        const statusSelect = document.getElementById('modalStatusSelect');
+                        const isTerminal = ['picked-up', 'cancelled'].includes(pending.newStatus);
+                        if (isTerminal) {
+                            statusSelect.disabled = true;
+                            statusSelect.classList.add('opacity-60', 'cursor-not-allowed');
+                            document.getElementById('saveStatusBtn').disabled = true;
+                            document.getElementById('saveStatusBtn').classList.add('opacity-50', 'cursor-not-allowed');
+                        }
+
+                        showToast(data.message || 'Status updated successfully!', 'success');
+
+                        // Close confirmation modal
+                        closeStatusConfirmModal();
+
+                        // Close the main modal after a brief delay
+                        setTimeout(() => closeModal(), 800);
+                    })
+                    .catch(err => {
+                        showToast(err.message || 'Failed to update status', 'danger');
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Confirm & Send Email';
+                        window._pendingStatusChange = null;
+                    });
+            });
+
+            // ── Modal Close Helpers ───────────────────────────────────────
+            function closeStatusConfirmModal() {
+                window._pendingStatusChange = null;
+                const modal = document.getElementById('statusConfirmModal');
+                const content = document.getElementById('status-confirm-modal-content');
                 content.classList.add('scale-95', 'opacity-0');
                 content.classList.remove('scale-100', 'opacity-100');
                 setTimeout(() => modal.classList.add('hidden'), 200);
             }
 
-            function closeTerminalModal() {
-                const pending = window._pendingAction;
-                if (pending && (pending.status === 'picked-up' || pending.status === 'cancelled')) {
-                    pending.select.value = pending.row.dataset.status || 'processing';
-                }
-                window._pendingAction = null;
+            // Close modals on outside click
+            document.getElementById('orderDetailsModal')?.addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+            document.getElementById('statusConfirmModal')?.addEventListener('click', function(e) {
+                if (e.target === this) closeStatusConfirmModal();
+            });
 
-                const modal = document.getElementById('terminalConfirmModal');
-                const content = document.getElementById('terminal-modal-content');
-                content.classList.add('scale-95', 'opacity-0');
-                content.classList.remove('scale-100', 'opacity-100');
-                setTimeout(() => modal.classList.add('hidden'), 200);
-            }
-
-            // ---------- Toast system ----------
-
+            // ── Toast System ──────────────────────────────────────────────
             function showToast(message, type = 'success') {
                 const existing = document.querySelector('.toast-notification');
                 if (existing) existing.remove();
@@ -615,51 +631,6 @@
                     setTimeout(() => toast.remove(), 300);
                 }, 4000);
             }
-
-            // ---------- Event bindings ----------
-
-            // Close modals on outside click
-            document.getElementById('orderDetailsModal')?.addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-            document.getElementById('pickupModal')?.addEventListener('click', function(e) {
-                if (e.target === this) closePickupModal();
-            });
-            document.getElementById('terminalConfirmModal')?.addEventListener('click', function(e) {
-                if (e.target === this) closeTerminalModal();
-            });
-
-            // Status filter tabs
-            document.querySelectorAll('.status-filter').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.status-filter').forEach(b => {
-                        b.classList.remove('bg-[#0F3D2A]', 'text-white');
-                        b.classList.add('bg-gray-100', 'text-gray-600');
-                    });
-                    this.classList.remove('bg-gray-100', 'text-gray-600');
-                    this.classList.add('bg-[#0F3D2A]', 'text-white');
-
-                    const filter = this.textContent.trim().toLowerCase();
-                    document.querySelectorAll('.order-row').forEach(row => {
-                        const status = (row.dataset.status || '').toLowerCase();
-                        if (filter === 'all orders') {
-                            row.style.display = '';
-                        } else {
-                            const normalizedFilter = filter.replace(/\s+/g, '-');
-                            row.style.display = status === normalizedFilter ? '' : 'none';
-                        }
-                    });
-                });
-            });
-
-            // Search functionality
-            document.getElementById('searchInput')?.addEventListener('keyup', function() {
-                const query = this.value.toLowerCase();
-                document.querySelectorAll('.order-row').forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(query) ? '' : 'none';
-                });
-            });
         </script>
     @endpush
 @endsection

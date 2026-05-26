@@ -1,6 +1,37 @@
 @props(['activeRoute' => ''])
 
 @php
+    use App\Models\Order;
+    use Carbon\Carbon;
+
+    $pendingOrdersCount = Order::whereIn('status', ['pending', 'processing'])->count();
+
+    // Today's revenue
+    $todayRevenue = (float) Order::whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+        ->where('status', '!=', 'cancelled')
+        ->sum('total_amount');
+
+    // Yesterday's revenue for comparison
+    $yesterdayRevenue = (float) Order::whereBetween('created_at', [Carbon::now()->subDay()->startOfDay(), Carbon::now()->subDay()->endOfDay()])
+        ->where('status', '!=', 'cancelled')
+        ->sum('total_amount');
+
+    $revenueChangePct = $yesterdayRevenue > 0
+        ? round((($todayRevenue - $yesterdayRevenue) / $yesterdayRevenue) * 100, 1)
+        : 100;
+
+    $revenueChangePrefix = $revenueChangePct >= 0 ? '+' : '';
+
+    // Revenue progress bar (relative to a reasonable daily target)
+    $dailyTarget = 3000; // Default daily target if no history
+    $avgDailyRevenue = (float) Order::where('created_at', '>=', Carbon::now()->subDays(30))
+        ->where('status', '!=', 'cancelled')
+        ->avg('total_amount');
+    if ($avgDailyRevenue > 0) {
+        $dailyTarget = $avgDailyRevenue * 1.2; // 20% above average as target
+    }
+    $revenueProgress = $dailyTarget > 0 ? min(100, round(($todayRevenue / $dailyTarget) * 100)) : 0;
+
     $navItems = [
         [
             'route' => 'admin.dashboard',
@@ -11,7 +42,7 @@
             'route' => 'admin.orders',
             'label' => 'Orders',
             'icon' => 'fa-solid fa-receipt',
-            'badge' => '12',
+            'badge' => $pendingOrdersCount > 0 ? (string) $pendingOrdersCount : null,
         ],
         [
             'route' => 'admin.products',
@@ -110,11 +141,13 @@
         <div class="sidebar-stats px-4 py-3 mt-2 rounded-xl bg-white/5 border border-white/5">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs text-white/40">Today's Revenue</span>
-                <span class="text-xs font-semibold text-[#f4d03f]">+12.5%</span>
+                <span class="text-xs font-semibold text-[#f4d03f]">{{ $revenueChangePrefix }}{{ $revenueChangePct }}%</span>
             </div>
-            <p class="text-lg font-bold text-white">$2,847</p>
+            <p class="text-lg font-bold text-white">${{ number_format($todayRevenue, 0) }}</p>
             <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
-                <div class="h-full w-3/4 bg-gradient-to-r from-[#f4d03f] to-[#e8b923] rounded-full"></div>
+                <div class="h-full bg-gradient-to-r from-[#f4d03f] to-[#e8b923] rounded-full transition-all duration-500"
+                    style="width: {{ $revenueProgress }}%">
+                </div>
             </div>
         </div>
     </nav>

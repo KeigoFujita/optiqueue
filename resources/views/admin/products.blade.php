@@ -56,6 +56,11 @@
                 {{ $currentFilter === 'accessory' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium' }}">
                 <i class="fa-solid fa-bag-shopping mr-1.5"></i>Accessories
             </a>
+            <a href="{{ route('admin.products', ['filter' => 'archived', 'search' => $currentSearch]) }}"
+                class="px-4 py-2 rounded-xl text-xs font-semibold transition-all
+                {{ $currentFilter === 'archived' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium' }}">
+                <i class="fa-solid fa-archive mr-1.5"></i>Archived
+            </a>
         </div>
 
         <!-- Products Grid -->

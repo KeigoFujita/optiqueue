@@ -19,10 +19,18 @@ class ProductController extends Controller
     {
         $query = Product::query();
 
-        // ── Category filter ────────────────────────────────────
+        // ── Category / Status filter ────────────────────────────
         $filter = $request->query('filter', 'all');
-        if ($filter !== 'all') {
-            $query->where('type', $filter);
+        if ($filter === 'archived') {
+            // Show only archived products
+            $query->where('status', 'archived');
+        } else {
+            // Default & category filters: show only active products
+            $query->where('status', 'active');
+
+            if ($filter !== 'all') {
+                $query->where('type', $filter);
+            }
         }
 
         // ── Search ─────────────────────────────────────────────

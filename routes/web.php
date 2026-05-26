@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CheckoutController;
@@ -60,13 +61,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('dashboard.data');
 
-        Route::get('/orders', function () {
-            return view('admin.orders');
-        })->name('orders');
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders');
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+        Route::put('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
         Route::get('/products', [AdminProductController::class, 'index'])->name('products');
         Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
@@ -79,8 +79,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/products/{product}/movements', [AdminProductController::class, 'movements'])->name('products.movements');
         Route::post('/products/{product}/movements', [AdminProductController::class, 'storeMovement'])->name('products.movements.store');
 
-        Route::get('/inventory', function () {
-            return view('admin.inventory');
-        })->name('inventory');
+        Route::get('/inventory', [AdminController::class, 'inventory'])->name('inventory');
     });
 });
