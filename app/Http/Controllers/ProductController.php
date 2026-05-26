@@ -14,9 +14,19 @@ class ProductController extends Controller
         $products = Product::all();
         $bestSellers = Product::where('badge', 'Bestseller')->get();
 
+        // ── Category counts for "Shop by Category" section ──────
+        $menCount = Product::where('category', 'men')->where('type', 'frame')->count();
+        $womenCount = Product::where('category', 'women')->where('type', 'frame')->count();
+        $lensCount = Product::where('type', 'lens')->count();
+        $accessoriesCount = Product::where('type', 'accessory')->count();
+
         return view('index', [
             'products' => $products,
             'bestSellers' => $bestSellers,
+            'menCount' => $menCount,
+            'womenCount' => $womenCount,
+            'lensCount' => $lensCount,
+            'accessoriesCount' => $accessoriesCount,
         ]);
     }
 

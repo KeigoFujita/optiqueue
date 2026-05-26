@@ -172,7 +172,7 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
                         <h3 class="text-lg md:text-xl font-bold text-white">Men's</h3>
-                        <p class="text-sm text-white/80 mt-1">42 styles</p>
+                        <p class="text-sm text-white/80 mt-1">{{ $menCount }} styles</p>
                     </div>
                 </a>
 
@@ -185,33 +185,33 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
                         <h3 class="text-lg md:text-xl font-bold text-white">Women's</h3>
-                        <p class="text-sm text-white/80 mt-1">38 styles</p>
+                        <p class="text-sm text-white/80 mt-1">{{ $womenCount }} styles</p>
                     </div>
                 </a>
 
-                {{-- Sunglasses --}}
+                {{-- Lens --}}
                 <a href="/products" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
                     <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&q=80&auto=format&fit=crop"
-                        alt="Premium sunglasses collection with UV protection"
+                        alt="Premium lens collection for crystal clear vision"
                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-                        <h3 class="text-lg md:text-xl font-bold text-white">Sunglasses</h3>
-                        <p class="text-sm text-white/80 mt-1">24 styles</p>
+                        <h3 class="text-lg md:text-xl font-bold text-white">Lens</h3>
+                        <p class="text-sm text-white/80 mt-1">{{ $lensCount }} types</p>
                     </div>
                 </a>
 
-                {{-- Blue Light --}}
+                {{-- Accessories --}}
                 <a href="/products" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
                     <img src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&q=80&auto=format&fit=crop"
-                        alt="Blue light blocking glasses for digital screen protection"
+                        alt="Eyewear accessories and care products"
                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-                        <h3 class="text-lg md:text-xl font-bold text-white">Blue Light</h3>
-                        <p class="text-sm text-white/80 mt-1">18 styles</p>
+                        <h3 class="text-lg md:text-xl font-bold text-white">Accessories</h3>
+                        <p class="text-sm text-white/80 mt-1">{{ $accessoriesCount }} styles</p>
                     </div>
                 </a>
             </div>
@@ -244,7 +244,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 @forelse ($bestSellers as $product)
-                    <x-product-card :image="asset('storage/' . $product->image_path)" :name="$product->name" :description="$product->description" :price="$product->price"
+                    <x-product-card :product-id="$product->id" :image="asset('storage/' . $product->image_path)" :name="$product->name" :description="$product->description" :price="$product->price"
                         :old-price="$product->old_price" :badge="$product->badge" :badge-color="$product->badge_color" />
                 @empty
                     <p class="col-span-full text-center text-gray-500 py-12">No products available at the moment.</p>

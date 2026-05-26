@@ -63,12 +63,11 @@
                                             👓</div>
                                         <div>
                                             <p class="font-semibold text-gray-900">Frame</p>
-                                            <p class="text-sm text-gray-500" id="summary-frame">{{ $frame ?: '—' }}</p>
+                                            <p class="text-sm text-gray-500" id="summary-frame">{{ $frame ? $frame->name : '—' }}</p>
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-sm text-gray-500" id="summary-frame-price">
-                                            ${{ $total - $lensPrice - $accessoryPrice }}</p>
+                                        <p class="text-sm text-gray-500" id="summary-frame-price">${{ $framePrice }}</p>
                                     </div>
                                 </div>
 
@@ -80,7 +79,7 @@
                                             🔵</div>
                                         <div>
                                             <p class="font-semibold text-gray-900">Lens</p>
-                                            <p class="text-sm text-gray-500" id="summary-lens">{{ $lens ?: 'Standard' }}</p>
+                                            <p class="text-sm text-gray-500" id="summary-lens">{{ $lens ? $lens->name : 'Standard' }}</p>
                                         </div>
                                     </div>
                                     <div class="text-right">
@@ -97,7 +96,7 @@
                                         <div>
                                             <p class="font-semibold text-gray-900">Accessory</p>
                                             <p class="text-sm text-gray-500" id="summary-accessory">
-                                                {{ $accessory ?: 'Default Case' }}</p>
+                                                {{ $accessory ? $accessory->name : 'Default Case' }}</p>
                                         </div>
                                     </div>
                                     <div class="text-right">

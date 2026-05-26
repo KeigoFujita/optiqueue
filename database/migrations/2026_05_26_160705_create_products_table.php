@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('price');
             $table->integer('old_price')->nullable();
             $table->text('image_path');
+            $table->string('icon')->nullable();
             $table->string('badge')->nullable();
             $table->string('badge_color')->nullable();
             $table->timestamps();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
@@ -23,21 +24,17 @@ Route::get('/checkout', function () {
         $product = Product::find($productId);
     }
 
-    return view('checkout', ['product' => $product]);
+    $lenses = Product::where('type', 'lens')->get();
+    $accessories = Product::where('type', 'accessory')->get();
+
+    return view('checkout', [
+        'product' => $product,
+        'lenses' => $lenses,
+        'accessories' => $accessories,
+    ]);
 });
 
-Route::get('/order', function () {
-    $params = [
-        'frame' => request()->query('frame', ''),
-        'lens' => request()->query('lens', 'Standard'),
-        'lensPrice' => (int) request()->query('lensPrice', 0),
-        'accessory' => request()->query('accessory', 'Default Case'),
-        'accessoryPrice' => (int) request()->query('accessoryPrice', 0),
-        'total' => (int) request()->query('total', 0),
-    ];
-
-    return view('place-order', $params);
-});
+Route::get('/order', [CheckoutController::class, 'placeOrder']);
 
 Route::get('/framedetail', function () {
     return view('framedetail');

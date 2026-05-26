@@ -1,4 +1,6 @@
 @props([
+    'id' => null,
+    'numid' => null,
     'name' => 'Accessory',
     'price' => 0,
     'icon' => '📦',
@@ -14,7 +16,7 @@
 <label for="{{ $id }}"
     class="accessory-card relative border-2 rounded-2xl p-4 md:p-5 text-center cursor-pointer transition-all duration-300 bg-white hover:shadow-md hover:shadow-[#1a3c2e]/10 hover:border-[#1a3c2e]/30 group
     {{ $selected ? 'border-[#1a3c2e] bg-[#1a3c2e]/[0.08] shadow-md shadow-[#1a3c2e]/10' : 'border-gray-200' }}"
-    onclick="selectAccessory('{{ $value }}', {{ $price }}, '{{ $name }}')">
+    onclick="selectAccessory('{{ $value }}', {{ $price }}, '{{ $name }}', '{{ $id ?? 'null' }}', {{ $numid }})">
     <input type="radio" name="accessory" id="{{ $id }}" value="{{ $value }}" class="sr-only"
         {{ $selected ? 'checked' : '' }}>
 

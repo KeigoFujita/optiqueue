@@ -51,7 +51,7 @@
                             {{-- Frame Image --}}
                             <div
                                 class="bg-[#f8faf7] rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center border border-gray-100">
-                                <img src="{{ $product ? $product['image'] : 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&q=80&auto=format&fit=crop' }}"
+                                <img src="storage/{{ $product ? $product['image_path'] : 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&q=80&auto=format&fit=crop' }}"
                                     alt="{{ $product ? $product['name'] : 'Selected Frame' }}"
                                     class="w-full max-w-[280px] h-auto object-contain p-4">
                             </div>
@@ -104,18 +104,17 @@
                                 class="text-xs font-semibold tracking-wider text-[#1a3c2e] bg-[#1a3c2e]/[0.08] px-3 py-1.5 rounded-full uppercase">Required</span>
                         </div>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                            <x-lens-option name="Standard" value="standard" price="0" icon="👓"
-                                description="Clear vision" :selected="true" />
-                            <x-lens-option name="Blue Lens" value="blue" price="50" icon="🔵"
-                                description="Blue light filter" />
-                            <x-lens-option name="Transition" value="transition" price="80" icon="🌫️"
-                                description="Light adaptive" />
-                            <x-lens-option name="Computer Progressive" value="progressive" price="100" icon="💻"
-                                description="Multi-focal" />
-                            <x-lens-option name="Ultra Thin" value="ultra-thin" price="70" icon="🥽"
-                                description="Slim profile" />
-                            <x-lens-option name="Polarized" value="polarized" price="90" icon="🕶️"
-                                description="Glare reduction" />
+                            @foreach ($lenses as $lens)
+                                <x-lens-option
+                                    :id="$lens->id"
+                                    :numid="$lens->id"
+                                    name="{{ $lens->name }}"
+                                    value="{{ Str::slug($lens->name) }}"
+                                    price="{{ $lens->price }}"
+                                    icon="{{ $lens->icon ?? '👓' }}"
+                                    description="{{ $lens->description }}"
+                                    :selected="$loop->first" />
+                            @endforeach
                         </div>
                     </div>
 
@@ -127,18 +126,17 @@
                                 class="text-xs font-semibold tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">Optional</span>
                         </div>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                            <x-accessory-option name="Default Case" value="default" price="0" icon="📦"
-                                description="Standard case" :selected="true" />
-                            <x-accessory-option name="Luxe Case" value="luxe-case" price="25" icon="💼"
-                                description="Premium leather" />
-                            <x-accessory-option name="Leather Case" value="leather" price="35" icon="👜"
-                                description="Genuine leather" />
-                            <x-accessory-option name="Eyeglass Chain" value="chain" price="15" icon="⛓️"
-                                description="Stylish chain" />
-                            <x-accessory-option name="Cleaning Spray" value="spray" price="10" icon="🧴"
-                                description="Lens cleaner" />
-                            <x-accessory-option name="Microfiber Cloth" value="cloth" price="8" icon="🧹"
-                                description="Soft cleaning" />
+                            @foreach ($accessories as $accessory)
+                                <x-accessory-option
+                                    :id="$accessory->id"
+                                    :numid="$accessory->id"
+                                    name="{{ $accessory->name }}"
+                                    value="{{ Str::slug($accessory->name) }}"
+                                    price="{{ $accessory->price }}"
+                                    icon="{{ $accessory->icon ?? '📦' }}"
+                                    description="{{ $accessory->description }}"
+                                    :selected="$loop->first" />
+                            @endforeach
                         </div>
                     </div>
 
@@ -209,11 +207,14 @@
                 // STATE
                 // ============================================================
                 const state = {
+                    frameId: {{ $product ? $product['id'] : 'null' }},
                     framePrice: {{ $product ? $product['price'] : 0 }},
-                    lensPrice: 0,
-                    lensName: 'Standard',
-                    accessoryPrice: 0,
-                    accessoryName: 'Default Case',
+                    lensId: {{ $lenses->first() ? $lenses->first()->id : 'null' }},
+                    lensPrice: {{ $lenses->first() ? $lenses->first()->price : 0 }},
+                    lensName: '{{ $lenses->first() ? $lenses->first()->name : 'Standard' }}',
+                    accessoryId: {{ $accessories->first() ? $accessories->first()->id : 'null' }},
+                    accessoryPrice: {{ $accessories->first() ? $accessories->first()->price : 0 }},
+                    accessoryName: '{{ $accessories->first() ? $accessories->first()->name : 'Default Case' }}',
                 };
                 // DOM refs
                 const lensPriceDisplay = document.getElementById('lens-price-display');
@@ -235,9 +236,10 @@
                 // ============================================================
                 // SELECTION HANDLERS
                 // ============================================================
-                window.selectLens = function(value, price, name) {
+                window.selectLens = function(value, price, name, id, numId) {
                     state.lensPrice = price;
                     state.lensName = name;
+                    state.lensId = numId;
                     document.querySelectorAll('.lens-card').forEach(function(card) {
                         card.classList.remove('border-[#1a3c2e]', 'bg-[#1a3c2e]/[0.08]', 'shadow-md',
                             'shadow-[#1a3c2e]/10');
@@ -268,9 +270,10 @@
                     });
                     updatePriceDisplay();
                 };
-                window.selectAccessory = function(value, price, name) {
+                window.selectAccessory = function(value, price, name, id, numid) {
                     state.accessoryPrice = price;
                     state.accessoryName = name;
+                    state.accessoryId = numid;
                     document.querySelectorAll('.accessory-card').forEach(function(card) {
                         card.classList.remove('border-[#1a3c2e]', 'bg-[#1a3c2e]/[0.08]', 'shadow-md',
                             'shadow-[#1a3c2e]/10');
@@ -305,14 +308,10 @@
                 // PROCEED TO CHECKOUT
                 // ============================================================
                 window.proceedToCheckout = function() {
-                    const params = new URLSearchParams({
-                        frame: '{{ $product ? $product['id'] : '' }}',
-                        lens: state.lensName,
-                        lensPrice: state.lensPrice,
-                        accessory: state.accessoryName,
-                        accessoryPrice: state.accessoryPrice,
-                        total: state.framePrice + state.lensPrice + state.accessoryPrice,
-                    });
+                    const params = new URLSearchParams();
+                    if (state.frameId !== null) params.set('frame_id', state.frameId);
+                    if (state.lensId !== null) params.set('lens_id', state.lensId);
+                    if (state.accessoryId !== null) params.set('accessory_id', state.accessoryId);
                     window.location.href = '/order?' + params.toString();
                 };
                 // ============================================================

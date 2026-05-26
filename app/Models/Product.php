@@ -16,5 +16,6 @@ class Product extends Model
         'image_path',
         'badge',
         'badge_color',
+        'icon',
     ];
 }
