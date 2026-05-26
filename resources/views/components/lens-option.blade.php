@@ -7,18 +7,21 @@
     'description' => '',
     'value' => '',
     'selected' => false,
+    'stocks' => 0,
 ])
 
 @php
     $id = 'lens-' . Str::slug($value ?: $name);
+    $isOutOfStock = $stocks <= 0;
 @endphp
 
 <label for="{{ $id }}"
     class="lens-card relative border-2 rounded-2xl p-4 md:p-5 text-center cursor-pointer transition-all duration-300 bg-white hover:shadow-md hover:shadow-[#1a3c2e]/10 hover:border-[#1a3c2e]/30 group
-    {{ $selected ? 'border-[#1a3c2e] bg-[#1a3c2e]/[0.08] shadow-md shadow-[#1a3c2e]/10' : 'border-gray-200' }}"
+    {{ $selected ? 'border-[#1a3c2e] bg-[#1a3c2e]/[0.08] shadow-md shadow-[#1a3c2e]/10' : 'border-gray-200' }}
+    {{ $isOutOfStock ? 'opacity-60 pointer-events-none' : '' }}"
     onclick="selectLens('{{ $value }}', {{ $price }}, '{{ $name }}', '{{ $id ?? 'null' }}', {{ $numid }})">
     <input type="radio" name="lens" id="{{ $id }}" value="{{ $value }}" class="sr-only"
-        {{ $selected ? 'checked' : '' }}>
+        {{ $selected ? 'checked' : '' }} {{ $isOutOfStock ? 'disabled' : '' }}>
 
     {{-- Icon Container --}}
     <div
@@ -34,11 +37,24 @@
         <p class="text-xs text-gray-500 mt-0.5">{{ $description }}</p>
     @endif
 
+    {{-- Stock indicator --}}
+    <div class="mt-1.5 flex items-center justify-center gap-1">
+        @if ($isOutOfStock)
+            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+            <span class="text-[10px] text-red-500 font-medium">Out of Stock</span>
+        @else
+            <span class="w-1.5 h-1.5 rounded-full {{ $stocks <= 5 ? 'bg-amber-500' : 'bg-green-500' }}"></span>
+            <span class="text-[10px] {{ $stocks <= 5 ? 'text-amber-600' : 'text-green-600' }} font-medium">
+                {{ $stocks <= 5 ? $stocks . ' left' : $stocks . ' in stock' }}
+            </span>
+        @endif
+    </div>
+
     {{-- Price --}}
     @if ($price > 0)
-        <p class="text-xs font-medium text-[#1a3c2e] mt-1.5">+${{ $price }}</p>
+        <p class="text-xs font-medium text-[#1a3c2e] mt-1">+${{ $price }}</p>
     @else
-        <p class="text-xs font-medium text-gray-400 mt-1.5">Included</p>
+        <p class="text-xs font-medium text-gray-400 mt-1">Included</p>
     @endif
 
     {{-- Selected indicator --}}

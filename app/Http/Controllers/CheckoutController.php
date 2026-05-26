@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
+use App\Models\ProductMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -239,6 +240,26 @@ class CheckoutController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
+                ]);
+
+                // ── Deduct stock and record product movement ──────────
+                $product = Product::findOrFail($item['product_id']);
+
+                if ($product->stocks < $item['quantity']) {
+                    throw new \RuntimeException(
+                        "Insufficient stock for product '{$product->name}': only {$product->stocks} left, requested {$item['quantity']}."
+                    );
+                }
+
+                $product->decrement('stocks', $item['quantity']);
+
+                ProductMovement::create([
+                    'product_id' => $product->id,
+                    'movement_type' => 'out',
+                    'movement_category' => 'sale',
+                    'quantity' => $item['quantity'],
+                    'movement_date' => now()->toDateString(),
+                    'reference_id' => $order->order_no,
                 ]);
             }
 

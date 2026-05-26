@@ -113,6 +113,7 @@
                                     price="{{ $lens->price }}"
                                     icon="{{ $lens->icon ?? '👓' }}"
                                     description="{{ $lens->description }}"
+                                    :stocks="$lens->stocks"
                                     :selected="$loop->first" />
                             @endforeach
                         </div>
@@ -135,6 +136,7 @@
                                     price="{{ $accessory->price }}"
                                     icon="{{ $accessory->icon ?? '📦' }}"
                                     description="{{ $accessory->description }}"
+                                    :stocks="$accessory->stocks"
                                     :selected="$loop->first" />
                             @endforeach
                         </div>
