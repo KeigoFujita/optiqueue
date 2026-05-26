@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->string('badge')->nullable();
             $table->string('badge_color')->nullable();
+            $table->enum('status', ['active', 'archived'])->default('active');
             $table->timestamps();
         });
     }

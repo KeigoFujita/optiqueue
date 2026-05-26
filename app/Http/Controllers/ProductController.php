@@ -11,14 +11,14 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
-        $bestSellers = Product::where('badge', 'Bestseller')->get();
+        $products = Product::active()->get();
+        $bestSellers = Product::active()->where('badge', 'Bestseller')->get();
 
         // ── Category counts for "Shop by Category" section ──────
-        $menCount = Product::where('category', 'men')->where('type', 'frame')->count();
-        $womenCount = Product::where('category', 'women')->where('type', 'frame')->count();
-        $lensCount = Product::where('type', 'lens')->count();
-        $accessoriesCount = Product::where('type', 'accessory')->count();
+        $menCount = Product::active()->where('category', 'men')->where('type', 'frame')->count();
+        $womenCount = Product::active()->where('category', 'women')->where('type', 'frame')->count();
+        $lensCount = Product::active()->where('type', 'lens')->count();
+        $accessoriesCount = Product::active()->where('type', 'accessory')->count();
 
         return view('index', [
             'products' => $products,
@@ -35,7 +35,7 @@ class ProductController extends Controller
      */
     public function men()
     {
-        $query = Product::where('category', 'men');
+        $query = Product::active()->where('category', 'men');
 
         // ── Filter ──────────────────────────────────────────────
         $filter = request()->query('filter', 'all');
@@ -72,7 +72,7 @@ class ProductController extends Controller
      */
     public function women()
     {
-        $query = Product::where('category', 'women');
+        $query = Product::active()->where('category', 'women');
 
         // ── Filter ──────────────────────────────────────────────
         $filter = request()->query('filter', 'all');

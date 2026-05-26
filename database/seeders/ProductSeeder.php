@@ -24,6 +24,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
                 'stocks' => 35,
+                'status' => 'active',
             ],
             [
                 'name' => 'Creston',
@@ -36,6 +37,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
                 'stocks' => 28,
+                'status' => 'active',
             ],
             [
                 'name' => 'Imperio',
@@ -48,6 +50,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'New',
                 'badge_color' => '#eab308',
                 'stocks' => 40,
+                'status' => 'active',
             ],
             [
                 'name' => 'Monarch',
@@ -60,6 +63,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
                 'stocks' => 32,
+                'status' => 'active',
             ],
             [
                 'name' => 'Noirline',
@@ -72,6 +76,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
                 'stocks' => 25,
+                'status' => 'active',
             ],
             [
                 'name' => 'Regalis',
@@ -84,6 +89,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'Sale',
                 'badge_color' => '#f59e0b',
                 'stocks' => 18,
+                'status' => 'active',
             ],
             [
                 'name' => 'Stratos',
@@ -96,6 +102,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
                 'stocks' => 30,
+                'status' => 'active',
             ],
             [
                 'name' => 'Titan',
@@ -108,6 +115,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
                 'stocks' => 38,
+                'status' => 'active',
             ],
             [
                 'name' => 'Valen',
@@ -120,6 +128,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'New',
                 'badge_color' => '#eab308',
                 'stocks' => 22,
+                'status' => 'active',
             ],
             [
                 'name' => 'Vanguard',
@@ -132,6 +141,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
                 'stocks' => 15,
+                'status' => 'active',
             ],
         ];
 
@@ -148,6 +158,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '👓',
                 'stocks' => 100,
+                'status' => 'active',
             ],
             [
                 'name' => 'Blue Lens',
@@ -161,6 +172,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '🔵',
                 'stocks' => 85,
+                'status' => 'active',
             ],
             [
                 'name' => 'Transition',
@@ -174,6 +186,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '🌫️',
                 'stocks' => 60,
+                'status' => 'active',
             ],
             [
                 'name' => 'Computer Progressive',
@@ -187,6 +200,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '💻',
                 'stocks' => 45,
+                'status' => 'active',
             ],
             [
                 'name' => 'Ultra Thin',
@@ -200,6 +214,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '🥽',
                 'stocks' => 70,
+                'status' => 'active',
             ],
             [
                 'name' => 'Polarized',
@@ -213,6 +228,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '🕶️',
                 'stocks' => 55,
+                'status' => 'active',
             ],
         ];
 
@@ -229,6 +245,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '📦',
                 'stocks' => 80,
+                'status' => 'active',
             ],
             [
                 'name' => 'Luxe Case',
@@ -242,6 +259,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '💼',
                 'stocks' => 45,
+                'status' => 'active',
             ],
             [
                 'name' => 'Leather Case',
@@ -255,6 +273,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '👜',
                 'stocks' => 30,
+                'status' => 'active',
             ],
             [
                 'name' => 'Eyeglass Chain',
@@ -268,6 +287,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '⛓️',
                 'stocks' => 55,
+                'status' => 'active',
             ],
             [
                 'name' => 'Cleaning Spray',
@@ -281,6 +301,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '🧴',
                 'stocks' => 65,
+                'status' => 'active',
             ],
             [
                 'name' => 'Microfiber Cloth',
@@ -294,6 +315,7 @@ class ProductSeeder extends Seeder
                 'badge_color' => null,
                 'icon' => '🧹',
                 'stocks' => 90,
+                'status' => 'active',
             ],
         ];
 
@@ -309,6 +331,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
                 'stocks' => 30,
+                'status' => 'active',
             ],
             [
                 'name' => 'Celestia',
@@ -321,6 +344,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'New',
                 'badge_color' => '#eab308',
                 'stocks' => 20,
+                'status' => 'active',
             ],
             [
                 'name' => 'Elysia',
@@ -333,6 +357,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
                 'stocks' => 35,
+                'status' => 'active',
             ],
             [
                 'name' => 'Florent',
@@ -345,6 +370,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
                 'stocks' => 5,
+                'status' => 'active',
             ],
             [
                 'name' => 'Lunette',
@@ -357,6 +383,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'Sale',
                 'badge_color' => '#f59e0b',
                 'stocks' => 12,
+                'status' => 'active',
             ],
             [
                 'name' => 'Mirabelle',
@@ -369,6 +396,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'New',
                 'badge_color' => '#eab308',
                 'stocks' => 25,
+                'status' => 'active',
             ],
             [
                 'name' => 'Roselle',
@@ -381,6 +409,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
                 'stocks' => 18,
+                'status' => 'active',
             ],
             [
                 'name' => 'Seraphine',
@@ -393,6 +422,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
                 'stocks' => 28,
+                'status' => 'active',
             ],
             [
                 'name' => 'Veloura',
@@ -405,6 +435,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
                 'stocks' => 8,
+                'status' => 'active',
             ],
             [
                 'name' => 'Virelle',
@@ -417,6 +448,7 @@ class ProductSeeder extends Seeder
                 'badge' => 'New',
                 'badge_color' => '#eab308',
                 'stocks' => 22,
+                'status' => 'active',
             ],
         ];
 

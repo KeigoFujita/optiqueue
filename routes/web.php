@@ -23,11 +23,11 @@ Route::get('/checkout', function () {
     $productId = request()->query('product');
     $product = null;
     if ($productId) {
-        $product = Product::find($productId);
+        $product = Product::active()->find($productId);
     }
 
-    $lenses = Product::where('type', 'lens')->get();
-    $accessories = Product::where('type', 'accessory')->get();
+    $lenses = Product::active()->where('type', 'lens')->get();
+    $accessories = Product::active()->where('type', 'accessory')->get();
 
     return view('checkout', [
         'product' => $product,
@@ -69,6 +69,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         })->name('orders');
 
         Route::get('/products', [AdminProductController::class, 'index'])->name('products');
+        Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
 
         Route::get('/productmanagement', function () {
             return view('admin.productmanagement');

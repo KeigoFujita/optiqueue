@@ -85,7 +85,7 @@
     <!-- Add New Product Modal -->
     <div id="addProductModal"
         class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 transform transition-all duration-300 scale-95 opacity-0"
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 transform transition-all duration-300 scale-95 opacity-0 max-h-[90vh] overflow-y-auto"
             id="add-modal-content">
             <!-- Modal Header -->
             <div class="flex justify-between items-center border-b border-gray-100 px-6 py-4">
@@ -101,77 +101,146 @@
                 </button>
             </div>
 
-            <!-- Modal Body -->
-            <div class="p-6 space-y-5">
-                <!-- Product Name -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Name</label>
-                    <input type="text" id="productName" class="admin-input" placeholder="e.g. Aurel Burgundy Gold">
-                </div>
+            <!-- Modal Body - Two Column Layout -->
+            <form id="addProductForm" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="type" id="productType" value="frame">
 
-                <!-- Category -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Product Category</label>
-                    <div class="flex gap-3">
-                        <label
-                            class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50 flex-1 justify-center">
-                            <input type="radio" name="category" value="frame" checked class="accent-[#f4d03f]">
-                            <i class="fa-solid fa-glasses text-gray-400"></i>
-                            <span class="text-sm font-medium">Frame</span>
-                        </label>
-                        <label
-                            class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50 flex-1 justify-center">
-                            <input type="radio" name="category" value="lens" class="accent-[#f4d03f]">
-                            <i class="fa-solid fa-eye text-gray-400"></i>
-                            <span class="text-sm font-medium">Lens</span>
-                        </label>
-                        <label
-                            class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50 flex-1 justify-center">
-                            <input type="radio" name="category" value="accessory" class="accent-[#f4d03f]">
-                            <i class="fa-solid fa-bag-shopping text-gray-400"></i>
-                            <span class="text-sm font-medium">Accessories</span>
-                        </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                    {{-- ============================================================
+                    LEFT SECTION — Basic Info & Category
+                    ============================================================ --}}
+                    <div class="p-6 space-y-5">
+
+                        <!-- Product Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="productName" name="name" class="admin-input" placeholder="e.g. Aurel Burgundy Gold" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Description <span class="text-red-500">*</span></label>
+                            <textarea rows="3" id="productDesc" name="description" class="admin-input resize-none"
+                                placeholder="Brief description of the product..." required></textarea>
+                        </div>
+
+                        <!-- Category -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Category <span class="text-red-500">*</span></label>
+                            <div class="flex gap-3">
+                                <label
+                                    class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50 flex-1 justify-center">
+                                    <input type="radio" name="category" value="frame" checked onchange="toggleFields()" class="accent-[#f4d03f]">
+                                    <i class="fa-solid fa-glasses text-gray-400"></i>
+                                    <span class="text-sm font-medium">Frame</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50 flex-1 justify-center">
+                                    <input type="radio" name="category" value="lens" onchange="toggleFields()" class="accent-[#f4d03f]">
+                                    <i class="fa-solid fa-eye text-gray-400"></i>
+                                    <span class="text-sm font-medium">Lens</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50 flex-1 justify-center">
+                                    <input type="radio" name="category" value="accessory" onchange="toggleFields()" class="accent-[#f4d03f]">
+                                    <i class="fa-solid fa-bag-shopping text-gray-400"></i>
+                                    <span class="text-sm font-medium">Accessories</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Frame Type (Men / Women) - shown only when Frame is selected -->
+                        <div id="frameTypeGroup">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Frame Type <span class="text-red-500">*</span></label>
+                            <div class="flex gap-3">
+                                <label
+                                    class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50 flex-1 justify-center">
+                                    <input type="radio" name="frame_type" value="men" checked class="accent-[#f4d03f]">
+                                    <i class="fa-solid fa-person text-gray-400"></i>
+                                    <span class="text-sm font-medium">Men</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-[#f4d03f] transition-colors has-[:checked]:border-[#f4d03f] has-[:checked]:bg-amber-50/50 flex-1 justify-center">
+                                    <input type="radio" name="frame_type" value="women" class="accent-[#f4d03f]">
+                                    <i class="fa-solid fa-person-dress text-gray-400"></i>
+                                    <span class="text-sm font-medium">Women</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Status (dropdown) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Status <span class="text-red-500">*</span></label>
+                            <select name="status" id="productStatus" class="admin-input">
+                                <option value="active" selected>Active</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                        </div>
+
                     </div>
-                </div>
 
-                <!-- Description -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
-                    <textarea rows="3" id="productDesc" class="admin-input resize-none"
-                        placeholder="Brief description of the product..."></textarea>
-                </div>
+                    {{-- ============================================================
+                    RIGHT SECTION — Media, Pricing & Extras
+                    ============================================================ --}}
+                    <div class="p-6 space-y-5">
 
-                <!-- Image URL -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Image URL</label>
-                    <input type="text" id="productImage" class="admin-input" placeholder="https://example.com/image.jpg">
-                </div>
+                        <!-- Image Upload -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Image</label>
+                            <div class="relative">
+                                <input type="file" id="productImage" name="image" accept="image/jpeg,image/png,image/jpg,image/webp,image/avif"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 transition-colors cursor-pointer">
+                            </div>
+                            <div id="imagePreview" class="hidden mt-3">
+                                <img src="" alt="Preview" class="w-32 h-32 object-cover rounded-xl border border-gray-200">
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1.5">Accepted: JPEG, PNG, JPG, WebP, AVIF (max 2MB)</p>
+                        </div>
 
-                <!-- Price & Stock -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Price</label>
-                        <div class="relative">
-                            <span
-                                class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">$</span>
-                            <input type="text" id="productPrice" class="admin-input !pl-7" placeholder="0.00">
+                        <!-- Price & Old Price -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Price ($) <span class="text-red-500">*</span></label>
+                                <input type="number" step="0.01" min="0" id="productPrice" name="price" class="admin-input" placeholder="0.00" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Old Price ($)</label>
+                                <input type="number" step="0.01" min="0" id="productOldPrice" name="old_price" class="admin-input" placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <!-- Badge & Badge Color — shown only for Frames -->
+                        <div id="badgeFields">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Badge</label>
+                                    <input type="text" id="productBadge" name="badge" class="admin-input" placeholder="e.g. Bestseller, New, Sale">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Badge Color</label>
+                                    <input type="color" id="productBadgeColor" name="badge_color" class="admin-input !h-10 !p-1" value="#1a3c2e">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Icon — shown only for Lens / Accessory -->
+                        <div id="iconField">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Icon (emoji)</label>
+                            <input type="text" id="productIcon" name="icon" class="admin-input" placeholder="e.g. 👓, 🔵, 📦">
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="pt-4 flex gap-3 border-t border-gray-100">
+                            <button type="button" onclick="closeAddModal()" class="flex-1 btn-ghost justify-center !py-3">Cancel</button>
+                            <button type="submit" id="submitProductBtn" class="flex-1 btn-primary justify-center !py-3">
+                                <i class="fa-solid fa-check"></i>
+                                Add Product
+                            </button>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Stock Qty</label>
-                        <input type="number" id="productStock" class="admin-input" placeholder="0" min="0">
-                    </div>
                 </div>
-
-                <!-- Actions -->
-                <div class="pt-2 flex gap-3">
-                    <button onclick="closeAddModal()" class="flex-1 btn-ghost justify-center !py-3">Cancel</button>
-                    <button onclick="addNewProduct()" class="flex-1 btn-primary justify-center !py-3">
-                        <i class="fa-solid fa-check"></i>
-                        Add Product
-                    </button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -187,6 +256,7 @@
             function showAddProductModal() {
                 const modal = document.getElementById('addProductModal');
                 modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
                 setTimeout(() => {
                     const content = document.getElementById('add-modal-content');
                     content.classList.remove('scale-95', 'opacity-0');
@@ -199,27 +269,109 @@
                 const content = document.getElementById('add-modal-content');
                 content.classList.add('scale-95', 'opacity-0');
                 content.classList.remove('scale-100', 'opacity-100');
+                document.body.style.overflow = '';
                 setTimeout(() => modal.classList.add('hidden'), 200);
             }
 
-            function addNewProduct() {
-                const name = document.getElementById('productName').value.trim();
-                if (!name) {
-                    showToast('Please enter a product name.', 'info');
-                    document.getElementById('productName').focus();
-                    return;
+            // Toggle conditional fields based on selected category
+            function toggleFields() {
+                const frameTypeGroup = document.getElementById('frameTypeGroup');
+                const badgeFields = document.getElementById('badgeFields');
+                const iconField = document.getElementById('iconField');
+                const typeInput = document.getElementById('productType');
+                const selectedCategory = document.querySelector('input[name="category"]:checked').value;
+
+                if (selectedCategory === 'frame') {
+                    // Frame: show frame type + badge fields, hide icon
+                    frameTypeGroup.classList.remove('hidden');
+                    badgeFields.classList.remove('hidden');
+                    iconField.classList.add('hidden');
+                    typeInput.value = 'frame';
+                } else {
+                    // Lens or Accessory: hide frame type + badge, show icon
+                    frameTypeGroup.classList.add('hidden');
+                    badgeFields.classList.add('hidden');
+                    iconField.classList.remove('hidden');
+                    typeInput.value = selectedCategory === 'lens' ? 'lens' : 'accessory';
+                }
+            }
+
+            // Initialize field visibility on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                toggleFields();
+
+                const imageInput = document.getElementById('productImage');
+                if (imageInput) {
+                    imageInput.addEventListener('change', function(e) {
+                        const preview = document.getElementById('imagePreview');
+                        const img = preview.querySelector('img');
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(ev) {
+                                img.src = ev.target.result;
+                                preview.classList.remove('hidden');
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            preview.classList.add('hidden');
+                            img.src = '';
+                        }
+                    });
                 }
 
-                closeAddModal();
-                setTimeout(() => {
-                    showToast('✅ Product "' + name + '" added successfully!', 'success');
-                    // Reset form
-                    document.getElementById('productName').value = '';
-                    document.getElementById('productDesc').value = '';
-                    document.getElementById('productImage').value = '';
-                    document.getElementById('productPrice').value = '';
-                    document.getElementById('productStock').value = '';
-                }, 300);
+                // Handle form submission
+                const form = document.getElementById('addProductForm');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        addNewProduct();
+                    });
+                }
+            });
+
+            function addNewProduct() {
+                const form = document.getElementById('addProductForm');
+                const formData = new FormData(form);
+
+                // Determine correct category value for frame types
+                const category = document.querySelector('input[name="category"]:checked').value;
+                if (category === 'frame') {
+                    const frameType = document.querySelector('input[name="frame_type"]:checked').value;
+                    formData.set('category', frameType); // men or women
+                }
+
+                const submitBtn = document.getElementById('submitProductBtn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+                fetch('{{ route('admin.products.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        closeAddModal();
+                        showToast('✅ Product "' + data.product.name + '" added successfully!', 'success');
+                        // Reload page after short delay to show updated list
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        showToast('❌ Error: ' + (data.message || 'Something went wrong'), 'danger');
+                    }
+                })
+                .catch(error => {
+                    showToast('❌ Network error. Please try again.', 'danger');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                });
             }
 
             // Toast notification
