@@ -12,9 +12,17 @@
 @section('header-actions')
     <div class="flex items-center gap-3">
         <div class="relative">
-            <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" id="searchProduct" placeholder="Search products..."
-                class="admin-input !w-48 !py-2 !pl-9 !pr-3 !text-sm !rounded-xl bg-gray-50">
+            <form method="GET" action="{{ route('admin.products') }}" id="searchForm">
+                {{-- Preserve the current filter when searching --}}
+                @if ($currentFilter !== 'all')
+                    <input type="hidden" name="filter" value="{{ $currentFilter }}">
+                @endif
+                <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" name="search" placeholder="Search products..."
+                    value="{{ $currentSearch }}"
+                    class="admin-input !w-48 !py-2 !pl-9 !pr-3 !text-sm !rounded-xl bg-gray-50"
+                    onkeydown="if(event.key === 'Enter') this.closest('form').submit();">
+            </form>
         </div>
         <button onclick="showAddProductModal()" class="btn-primary !py-2 !px-4 !text-xs !rounded-xl">
             <i class="fa-solid fa-plus"></i>
@@ -26,90 +34,52 @@
 @section('content')
     <div class="p-6 lg:p-8 space-y-6">
 
-        <!-- Category Quick Filters -->
+        <!-- Category Quick Filters (server-side via URL query) -->
         <div class="flex flex-wrap gap-2">
-            <button
-                class="cat-filter active px-4 py-2 rounded-xl bg-[#0F3D2A] text-white text-xs font-semibold transition-all">
+            <a href="{{ route('admin.products', ['search' => $currentSearch]) }}"
+                class="px-4 py-2 rounded-xl text-xs font-semibold transition-all
+                {{ $currentFilter === 'all' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium' }}">
                 All Products
-            </button>
-            <button
-                class="cat-filter px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-all">
+            </a>
+            <a href="{{ route('admin.products', ['filter' => 'frame', 'search' => $currentSearch]) }}"
+                class="px-4 py-2 rounded-xl text-xs font-semibold transition-all
+                {{ $currentFilter === 'frame' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium' }}">
                 <i class="fa-solid fa-glasses mr-1.5"></i>Frames
-            </button>
-            <button
-                class="cat-filter px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-all">
+            </a>
+            <a href="{{ route('admin.products', ['filter' => 'lens', 'search' => $currentSearch]) }}"
+                class="px-4 py-2 rounded-xl text-xs font-semibold transition-all
+                {{ $currentFilter === 'lens' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium' }}">
                 <i class="fa-solid fa-eye mr-1.5"></i>Lenses
-            </button>
-            <button
-                class="cat-filter px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-all">
+            </a>
+            <a href="{{ route('admin.products', ['filter' => 'accessory', 'search' => $currentSearch]) }}"
+                class="px-4 py-2 rounded-xl text-xs font-semibold transition-all
+                {{ $currentFilter === 'accessory' ? 'bg-[#0F3D2A] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium' }}">
                 <i class="fa-solid fa-bag-shopping mr-1.5"></i>Accessories
-            </button>
+            </a>
         </div>
 
         <!-- Products Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 stagger-children" id="productsGrid">
-            @foreach (range(1, 8) as $i)
-                @php
-                    $names = [
-                        'Aurel Burgundy Gold',
-                        'Kairo Matte Black',
-                        'Vienna Crystal',
-                        'Milan Tortoise',
-                        'Oslo Gunmetal',
-                        'Paris Rose Gold',
-                        'Tokyo Blue',
-                        'Venice Green',
-                    ];
-                    $categories = ['Frame', 'Frame', 'Frame', 'Frame', 'Lens', 'Accessories', 'Lens', 'Accessories'];
-                    $prices = [168, 145, 198, 175, 89, 45, 120, 35];
-                    $stocks = [50, 65, 30, 42, 80, 89, 55, 120];
-                @endphp
-                <div class="admin-card overflow-hidden group product-card"
-                    data-category="{{ strtolower($categories[$i - 1]) }}">
-                    <!-- Product Image -->
-                    <div class="relative h-44 bg-gray-50 overflow-hidden">
-                        <img src="https://picsum.photos/id/{{ 200 + $i }}/400/300" alt="{{ $names[$i - 1] }}"
-                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                        <!-- Category Badge -->
-                        <span
-                            class="absolute top-3 left-3 badge badge-neutral text-[10px] bg-white/90 backdrop-blur-sm shadow-sm">
-                            {{ $categories[$i - 1] }}
-                        </span>
-                        <!-- Price Badge -->
-                        <span
-                            class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm shadow-sm text-gray-900 font-bold text-xs px-3 py-1 rounded-full">
-                            ${{ $prices[$i - 1] }}
-                        </span>
-                    </div>
-                    <!-- Product Info -->
-                    <div class="p-4">
-                        <h4 class="text-sm font-semibold text-gray-900 truncate mb-1">{{ $names[$i - 1] }}</h4>
-                        <p class="text-xs text-gray-400 line-clamp-2 mb-3">
-                            Premium {{ strtolower($categories[$i - 1]) }} with elegant design and high-quality materials.
-                        </p>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-1.5 text-xs">
-                                <i class="fa-solid fa-box text-gray-400"></i>
-                                <span class="text-gray-500">Stock: </span>
-                                <span class="font-semibold text-gray-700">{{ $stocks[$i - 1] }}</span>
-                            </div>
-                            <a href="{{ route('admin.productmanagement') }}"
-                                class="text-xs font-medium text-[#0F3D2A] hover:text-[#f4d03f] transition-colors flex items-center gap-1">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                                Edit
-                            </a>
-                        </div>
-                        <!-- Stock bar -->
-                        <div class="mt-2.5 h-1 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full bg-gradient-to-r from-[#0F3D2A] to-[#f4d03f]"
-                                style="width: {{ min($stocks[$i - 1], 100) }}%">
-                            </div>
-                        </div>
-                    </div>
+        @if ($products->count() > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 stagger-children" id="productsGrid">
+                @foreach ($products as $product)
+                    <x-admin.product-card :product="$product" />
+                @endforeach
+            </div>
+        @else
+            <div class="text-center py-16">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                    <i class="fa-solid fa-box-open text-3xl text-gray-300"></i>
                 </div>
-            @endforeach
-        </div>
+                <h3 class="text-lg font-semibold text-gray-500 mb-1">No products found</h3>
+                <p class="text-sm text-gray-400">
+                    @if ($currentFilter !== 'all' || $currentSearch)
+                        Try adjusting your filters or search term.
+                    @else
+                        No products have been added yet.
+                    @endif
+                </p>
+            </div>
+        @endif
     </div>
 
     <!-- Add New Product Modal -->
@@ -291,38 +261,6 @@
                     setTimeout(() => toast.remove(), 300);
                 }, 4000);
             }
-
-            // Category filter
-            document.querySelectorAll('.cat-filter').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.cat-filter').forEach(b => {
-                        b.classList.remove('bg-[#0F3D2A]', 'text-white');
-                        b.classList.add('bg-gray-100', 'text-gray-600');
-                    });
-                    this.classList.remove('bg-gray-100', 'text-gray-600');
-                    this.classList.add('bg-[#0F3D2A]', 'text-white');
-
-                    const filter = this.textContent.trim().toLowerCase();
-                    document.querySelectorAll('.product-card').forEach(card => {
-                        if (filter === 'all products') {
-                            card.style.display = '';
-                        } else {
-                            const category = card.dataset.category;
-                            card.style.display = category && filter.includes(category) ? '' : 'none';
-                        }
-                    });
-                });
-            });
-
-            // Product search
-            document.getElementById('searchProduct')?.addEventListener('keyup', function() {
-                const query = this.value.toLowerCase();
-                document.querySelectorAll('.product-card').forEach(card => {
-                    const title = card.querySelector('h4').textContent.toLowerCase();
-                    const desc = card.querySelector('p').textContent.toLowerCase();
-                    card.style.display = title.includes(query) || desc.includes(query) ? '' : 'none';
-                });
-            });
 
             // Close modal on outside click
             document.getElementById('addProductModal').addEventListener('click', function(e) {

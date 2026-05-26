@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
@@ -67,9 +68,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             return view('admin.orders');
         })->name('orders');
 
-        Route::get('/products', function () {
-            return view('admin.products');
-        })->name('products');
+        Route::get('/products', [AdminProductController::class, 'index'])->name('products');
 
         Route::get('/productmanagement', function () {
             return view('admin.productmanagement');
