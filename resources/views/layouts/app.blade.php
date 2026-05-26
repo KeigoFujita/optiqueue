@@ -61,8 +61,6 @@
                         $navLinks = [
                             ['href' => '/frames/men', 'label' => 'Men'],
                             ['href' => '/frames/women', 'label' => 'Women'],
-                            ['href' => '/products', 'label' => 'Sunglasses'],
-                            ['href' => '/products', 'label' => 'All Frames'],
                             ['href' => '/about', 'label' => 'About Us'],
                         ];
                     @endphp
@@ -98,8 +96,6 @@
                     $mobileNavLinks = [
                         ['href' => '/frames/men', 'label' => 'Men'],
                         ['href' => '/frames/women', 'label' => 'Women'],
-                        ['href' => '/products', 'label' => 'Sunglasses'],
-                        ['href' => '/products', 'label' => 'All Frames'],
                         ['href' => '/about', 'label' => 'About Us'],
                     ];
                 @endphp

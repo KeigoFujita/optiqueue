@@ -21,17 +21,17 @@
                 </div>
 
                 {{-- Sort By Dropdown --}}
-                <div class="flex items-center gap-3">
+                <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-3">
+                    @if (request('filter') && request('filter') !== 'all')
+                        <input type="hidden" name="filter" value="{{ request('filter') }}">
+                    @endif
                     <label for="sort-select" class="text-sm font-medium text-gray-600 whitespace-nowrap">Sort by</label>
-                    <select id="sort-select"
+                    <select id="sort-select" name="sort" onchange="this.form.submit()"
                         class="border border-gray-200 rounded-full px-5 py-2.5 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1a3c2e] focus:border-transparent shadow-sm hover:border-gray-300 transition-colors">
-                        <option value="featured">Featured</option>
-                        <option value="low">Price: Low to High</option>
-                        <option value="high">Price: High to Low</option>
-                        <option value="new">Newest First</option>
-                        <option value="popular">Most Popular</option>
+                        <option value="low" {{ $currentSort === 'low' ? 'selected' : '' }}>Price: Low to High</option>
+                        <option value="high" {{ $currentSort === 'high' ? 'selected' : '' }}>Price: High to Low</option>
                     </select>
-                </div>
+                </form>
             </div>
         </div>
     </section>
@@ -42,26 +42,36 @@
     <section class="relative py-8 md:py-12 bg-white" aria-labelledby="womens-frames-heading">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+            {{-- Filter Chips --}}
+            <div class="flex flex-wrap items-center gap-3 mb-8 reveal" id="filter-bar">
+                <span class="text-sm font-medium text-gray-600 mr-1">Filter:</span>
+
+                @php
+                    $filterOptions = [
+                        'all' => 'All',
+                        'Bestseller' => 'Best Seller',
+                        'New' => 'New',
+                        'Sale' => 'Sale',
+                    ];
+                @endphp
+
+                @foreach ($filterOptions as $value => $label)
+                    <a href="{{ url()->current() }}?filter={{ $value }}&sort={{ $currentSort }}"
+                        class="px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 shadow-sm
+                        {{ $currentFilter === $value ? 'bg-[#1a3c2e] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                        {{ $label }}
+                    </a>
+                @endforeach
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                 @forelse ($products as $product)
-                    <x-product-card :image="$product['image']" :name="$product['name']" :description="$product['description']" :price="$product['price']"
-                        :old-price="$product['oldPrice']" :rating="$product['rating']" :reviews="$product['reviews']" :badge="$product['badge']" :badge-color="$product['badgeColor']"
-                        :product-id="$product['id']" />
+                    <x-product-card :image="asset('storage/' . $product->image_path)" :name="$product->name" :description="$product->description" :price="$product->price"
+                        :old-price="$product->old_price" :badge="$product->badge" :badge-color="$product->badge_color"
+                        :product-id="$product->id" />
                 @empty
                     <p class="col-span-full text-center text-gray-500 py-12">No products available at the moment.</p>
                 @endforelse
-            </div>
-
-            {{-- Load More --}}
-            <div class="mt-14 text-center reveal">
-                <button onclick="loadMoreProducts()"
-                    class="inline-flex items-center gap-2 px-8 py-3.5 text-sm font-semibold text-[#1a3c2e] bg-[#1a3c2e]/[0.08] rounded-full hover:bg-[#1a3c2e] hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Load More Products
-                </button>
             </div>
         </div>
     </section>
@@ -148,10 +158,6 @@
                 }
 
             })();
-
-            function loadMoreProducts() {
-                alert("In a real application, this would load more products via AJAX.");
-            }
         </script>
     @endpush
 @endsection

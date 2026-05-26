@@ -29,10 +29,10 @@
                     </h1>
                     <p class="mt-6 text-base sm:text-lg text-gray-600 leading-relaxed max-w-lg">
                         Discover premium eyewear crafted for the modern individual.
-                        Precision optics meet timeless design — try on frames virtually from the comfort of your home.
+                        Precision optics meet timeless design — find your perfect frame today.
                     </p>
                     <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                        <a href="/products"
+                        <a href="#bestsellers"
                             class="group inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-white bg-[#1a3c2e] rounded-full hover:bg-[#2a5c3e] transition-all duration-300 shadow-lg shadow-[#1a3c2e]/20 hover:shadow-xl hover:shadow-[#1a3c2e]/30 hover:-translate-y-0.5">
                             Shop Best Sellers
                             <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none"
@@ -41,17 +41,6 @@
                                     d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                         </a>
-                        <button
-                            class="group inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-[#1a3c2e] bg-white border-2 border-[#1a3c2e]/20 rounded-full hover:border-[#1a3c2e] hover:bg-[#1a3c2e]/[0.02] transition-all duration-300"
-                            aria-label="Try virtual try-on">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            Virtual Try-On
-                        </button>
                     </div>
 
                     {{-- Trust badges --}}
@@ -78,7 +67,7 @@
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            Free Virtual Try-On
+                            Free Shipping
                         </div>
                     </div>
                 </div>
@@ -148,14 +137,12 @@
                     <div class="w-10 h-10 bg-[#1a3c2e]/[0.08] rounded-xl flex items-center justify-center shrink-0">
                         <svg class="w-5 h-5 text-[#1a3c2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold text-gray-900">Virtual Try-On</p>
-                        <p class="text-xs text-gray-500">See before you buy</p>
+                        <p class="text-sm font-semibold text-gray-900">Free Shipping</p>
+                        <p class="text-xs text-gray-500">On orders over $50</p>
                     </div>
                 </div>
             </div>
@@ -234,7 +221,7 @@
     {{-- ============================================================
     BEST SELLERS GRID
     ============================================================ --}}
-    <section class="relative py-16 md:py-24 bg-white" aria-labelledby="bestsellers-heading">
+    <section id="bestsellers" class="relative py-16 md:py-24 bg-white" aria-labelledby="bestsellers-heading">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 reveal">
                 <div>
@@ -257,8 +244,8 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 @forelse ($bestSellers as $product)
-                    <x-product-card :image="$product['image']" :name="$product['name']" :description="$product['description']" :price="$product['price']"
-                        :old-price="$product['oldPrice']" :rating="$product['rating']" :reviews="$product['reviews']" :badge="$product['badge']" :badge-color="$product['badgeColor']" />
+                    <x-product-card :image="asset('storage/' . $product->image_path)" :name="$product->name" :description="$product->description" :price="$product->price"
+                        :old-price="$product->old_price" :badge="$product->badge" :badge-color="$product->badge_color" />
                 @empty
                     <p class="col-span-full text-center text-gray-500 py-12">No products available at the moment.</p>
                 @endforelse
@@ -306,14 +293,11 @@
                     <div class="w-12 h-12 bg-[#f4d03f]/20 rounded-xl flex items-center justify-center mb-5">
                         <svg class="w-6 h-6 text-[#f4d03f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">Virtual Try-On</h3>
-                    <p class="text-sm text-gray-300 leading-relaxed">Our AI-powered virtual try-on lets you see how frames
-                        look on your face from every angle — no appointment needed.</p>
+                    <h3 class="text-lg font-semibold text-white mb-2">Premium Materials</h3>
+                    <p class="text-sm text-gray-300 leading-relaxed">Every frame is crafted from high-quality acetate, titanium, and stainless steel for lasting durability and comfort.</p>
                 </div>
 
                 <div class="bg-white/[0.06] backdrop-blur-sm rounded-2xl p-8 reveal border border-white/[0.08]">
