@@ -71,9 +71,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/products', [AdminProductController::class, 'index'])->name('products');
         Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
 
-        Route::get('/productmanagement', function () {
-            return view('admin.productmanagement');
-        })->name('productmanagement');
+        // Product edit (single-page with tabs)
+        Route::get('/products/{product}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
+
+        // Product movements
+        Route::get('/products/{product}/movements', [AdminProductController::class, 'movements'])->name('products.movements');
+        Route::post('/products/{product}/movements', [AdminProductController::class, 'storeMovement'])->name('products.movements.store');
 
         Route::get('/inventory', function () {
             return view('admin.inventory');

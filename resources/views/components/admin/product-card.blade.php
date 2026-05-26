@@ -93,7 +93,7 @@
                     {{ $isOutOfStock ? '0' : $product->stocks }}
                 </span>
             </div>
-            <a href="{{ route('admin.productmanagement', ['id' => $product->id]) }}"
+            <a href="{{ route('admin.products.edit', $product->id) }}"
                class="text-xs font-medium text-[#0F3D2A] hover:text-[#f4d03f] transition-colors flex items-center gap-1">
                 <i class="fa-solid fa-pen-to-square"></i>
                 Edit
