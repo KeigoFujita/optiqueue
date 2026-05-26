@@ -7,10 +7,12 @@
     'badge' => null,
     'badgeColor' => '#1a3c2e',
     'productId' => null,
+    'stocks' => 0,
 ])
 
 @php
     $modalId = 'image-modal-' . ($productId ?? Str::random(6));
+    $isOutOfStock = $stocks <= 0;
 @endphp
 
 <div
@@ -31,8 +33,15 @@
                 </svg>
             </span>
         </div>
-        {{-- Badge --}}
-        @if ($badge)
+        {{-- Badge / Out of Stock overlay --}}
+        @if ($isOutOfStock)
+            <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <span
+                    class="px-3 py-1.5 bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-bold rounded-full uppercase tracking-wider shadow-lg">
+                    Out of Stock
+                </span>
+            </div>
+        @elseif ($badge)
             <span
                 class="absolute top-3 left-3 px-2.5 py-1 text-white text-[10px] font-bold rounded-full uppercase tracking-wider"
                 style="background-color: {{ $badgeColor }}">{{ $badge }}</span>
@@ -41,16 +50,31 @@
     <div class="p-5 md:p-6">
         <h3 class="text-lg font-semibold text-gray-900">{{ $name }}</h3>
         <p class="text-sm text-gray-500 mt-0.5">{{ $description }}</p>
-        <div class="flex items-center justify-between mt-4">
+
+        {{-- Stock indicator --}}
+        <div class="mt-2 flex items-center gap-1.5">
+            @if ($isOutOfStock)
+                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                <span class="text-xs text-red-600 font-medium">Out of Stock</span>
+            @else
+                <span class="w-2 h-2 rounded-full {{ $stocks <= 5 ? 'bg-amber-500' : 'bg-green-500' }}"></span>
+                <span class="text-xs {{ $stocks <= 5 ? 'text-amber-600' : 'text-green-600' }} font-medium">
+                    {{ $stocks <= 5 ? 'Only ' . $stocks . ' left' : $stocks . ' in stock' }}
+                </span>
+            @endif
+        </div>
+
+        <div class="flex items-center justify-between mt-3">
             <span class="text-lg font-bold text-gray-900">
                 @if ($oldPrice)
                     <span class="text-gray-400 line-through text-sm mr-1">${{ $oldPrice }}</span>
                 @endif
                 ${{ $price }}
             </span>
-            <a href="{{ $productId ? '/checkout?product=' . $productId : '/checkout' }}"
-                class="inline-flex items-center px-4 py-1.5 text-xs font-semibold text-[#1a3c2e] bg-[#1a3c2e]/[0.08] rounded-full hover:bg-[#1a3c2e] hover:text-white transition-all duration-300">
-                Select Frame
+            <a href="{{ $productId && !$isOutOfStock ? '/checkout?product=' . $productId : ($isOutOfStock ? '#' : '/checkout') }}"
+                class="inline-flex items-center px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300
+                {{ $isOutOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'text-[#1a3c2e] bg-[#1a3c2e]/[0.08] hover:bg-[#1a3c2e] hover:text-white' }}">
+                {{ $isOutOfStock ? 'Unavailable' : 'Select Frame' }}
             </a>
         </div>
     </div>

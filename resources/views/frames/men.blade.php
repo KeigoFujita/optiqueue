@@ -68,7 +68,7 @@
                 @forelse ($products as $product)
                     <x-product-card :image="asset('storage/' . $product->image_path)" :name="$product->name" :description="$product->description" :price="$product->price"
                         :old-price="$product->old_price" :badge="$product->badge" :badge-color="$product->badge_color"
-                        :product-id="$product->id" />
+                        :product-id="$product->id" :stocks="$product->stocks" />
                 @empty
                     <p class="col-span-full text-center text-gray-500 py-12">No products available at the moment.</p>
                 @endforelse

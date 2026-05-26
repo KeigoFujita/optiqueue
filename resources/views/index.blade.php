@@ -245,7 +245,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 @forelse ($bestSellers as $product)
                     <x-product-card :product-id="$product->id" :image="asset('storage/' . $product->image_path)" :name="$product->name" :description="$product->description" :price="$product->price"
-                        :old-price="$product->old_price" :badge="$product->badge" :badge-color="$product->badge_color" />
+                        :old-price="$product->old_price" :badge="$product->badge" :badge-color="$product->badge_color"
+                        :stocks="$product->stocks" />
                 @empty
                     <p class="col-span-full text-center text-gray-500 py-12">No products available at the moment.</p>
                 @endforelse

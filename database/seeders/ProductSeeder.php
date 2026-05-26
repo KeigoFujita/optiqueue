@@ -23,6 +23,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/aurum.avif',
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
+                'stocks' => 35,
             ],
             [
                 'name' => 'Creston',
@@ -34,6 +35,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/creston.avif',
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
+                'stocks' => 28,
             ],
             [
                 'name' => 'Imperio',
@@ -45,6 +47,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/imperio.jpg',
                 'badge' => 'New',
                 'badge_color' => '#eab308',
+                'stocks' => 40,
             ],
             [
                 'name' => 'Monarch',
@@ -56,6 +59,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/monarch.jpg',
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
+                'stocks' => 32,
             ],
             [
                 'name' => 'Noirline',
@@ -67,6 +71,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/noirline.avif',
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
+                'stocks' => 25,
             ],
             [
                 'name' => 'Regalis',
@@ -78,6 +83,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/regalis.JPEG',
                 'badge' => 'Sale',
                 'badge_color' => '#f59e0b',
+                'stocks' => 18,
             ],
             [
                 'name' => 'Stratos',
@@ -89,6 +95,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/stratos.avif',
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
+                'stocks' => 30,
             ],
             [
                 'name' => 'Titan',
@@ -100,6 +107,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/titan.avif',
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
+                'stocks' => 38,
             ],
             [
                 'name' => 'Valen',
@@ -111,6 +119,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/valen.avif',
                 'badge' => 'New',
                 'badge_color' => '#eab308',
+                'stocks' => 22,
             ],
             [
                 'name' => 'Vanguard',
@@ -122,6 +131,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/men/vanguard.jpg',
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
+                'stocks' => 15,
             ],
         ];
 
@@ -137,6 +147,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '👓',
+                'stocks' => 100,
             ],
             [
                 'name' => 'Blue Lens',
@@ -149,6 +160,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '🔵',
+                'stocks' => 85,
             ],
             [
                 'name' => 'Transition',
@@ -161,6 +173,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '🌫️',
+                'stocks' => 60,
             ],
             [
                 'name' => 'Computer Progressive',
@@ -173,6 +186,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '💻',
+                'stocks' => 45,
             ],
             [
                 'name' => 'Ultra Thin',
@@ -185,6 +199,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '🥽',
+                'stocks' => 70,
             ],
             [
                 'name' => 'Polarized',
@@ -197,6 +212,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '🕶️',
+                'stocks' => 55,
             ],
         ];
 
@@ -212,6 +228,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '📦',
+                'stocks' => 80,
             ],
             [
                 'name' => 'Luxe Case',
@@ -224,6 +241,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '💼',
+                'stocks' => 45,
             ],
             [
                 'name' => 'Leather Case',
@@ -236,6 +254,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '👜',
+                'stocks' => 30,
             ],
             [
                 'name' => 'Eyeglass Chain',
@@ -248,6 +267,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '⛓️',
+                'stocks' => 55,
             ],
             [
                 'name' => 'Cleaning Spray',
@@ -260,6 +280,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '🧴',
+                'stocks' => 65,
             ],
             [
                 'name' => 'Microfiber Cloth',
@@ -272,6 +293,7 @@ class ProductSeeder extends Seeder
                 'badge' => null,
                 'badge_color' => null,
                 'icon' => '🧹',
+                'stocks' => 90,
             ],
         ];
 
@@ -286,6 +308,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/aurelia.webp',
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
+                'stocks' => 30,
             ],
             [
                 'name' => 'Celestia',
@@ -297,6 +320,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/celestia.jpg',
                 'badge' => 'New',
                 'badge_color' => '#eab308',
+                'stocks' => 20,
             ],
             [
                 'name' => 'Elysia',
@@ -308,6 +332,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/elysia.avif',
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
+                'stocks' => 35,
             ],
             [
                 'name' => 'Florent',
@@ -319,6 +344,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/florent.webp',
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
+                'stocks' => 5,
             ],
             [
                 'name' => 'Lunette',
@@ -330,6 +356,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/lunette.avif',
                 'badge' => 'Sale',
                 'badge_color' => '#f59e0b',
+                'stocks' => 12,
             ],
             [
                 'name' => 'Mirabelle',
@@ -341,6 +368,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/mirabelle.webp',
                 'badge' => 'New',
                 'badge_color' => '#eab308',
+                'stocks' => 25,
             ],
             [
                 'name' => 'Roselle',
@@ -352,6 +380,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/roselle.jpg',
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
+                'stocks' => 18,
             ],
             [
                 'name' => 'Seraphine',
@@ -363,6 +392,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/seraphine.avif',
                 'badge' => 'Bestseller',
                 'badge_color' => '#1a3c2e',
+                'stocks' => 28,
             ],
             [
                 'name' => 'Veloura',
@@ -374,6 +404,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/veloura.png',
                 'badge' => null,
                 'badge_color' => '#1a3c2e',
+                'stocks' => 8,
             ],
             [
                 'name' => 'Virelle',
@@ -385,6 +416,7 @@ class ProductSeeder extends Seeder
                 'image_path' => 'frames/women/virelle.webp',
                 'badge' => 'New',
                 'badge_color' => '#eab308',
+                'stocks' => 22,
             ],
         ];
 
