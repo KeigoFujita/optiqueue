@@ -128,13 +128,16 @@
             <span class="nav-label">Collapse</span>
         </button>
 
-        <a href="/admin/login"
-            class="group flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-white/40 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200">
-            <span class="w-5 h-5 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-right-from-bracket text-sm group-hover:translate-x-0.5 transition-transform"></i>
-            </span>
-            <span class="sidebar-footer-text">Log Out</span>
-        </a>
+        <form action="{{ route('admin.logout') }}" method="POST" class="block">
+            @csrf
+            <button type="submit"
+                class="group flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-white/40 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200">
+                <span class="w-5 h-5 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-right-from-bracket text-sm group-hover:translate-x-0.5 transition-transform"></i>
+                </span>
+                <span class="sidebar-footer-text">Log Out</span>
+            </button>
+        </form>
     </div>
 </aside>
 

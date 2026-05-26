@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Models\Product;
@@ -50,32 +51,32 @@ Route::get('/framedetail', function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/login', function () {
-        return view('admin.login');
-    })->name('login');
+    // ── Guest routes (login) ────────────────────────────────────────
+    Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AdminController::class, 'login'])->name('login.submit');
 
-    Route::post('/login', function () {
-        // TODO: Add admin authentication logic
-        return redirect()->route('admin.dashboard');
-    })->name('login.submit');
+    // ── Authenticated routes ────────────────────────────────────────
+    Route::middleware('auth')->group(function () {
+        Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
 
-    Route::get('/orders', function () {
-        return view('admin.orders');
-    })->name('orders');
+        Route::get('/orders', function () {
+            return view('admin.orders');
+        })->name('orders');
 
-    Route::get('/products', function () {
-        return view('admin.products');
-    })->name('products');
+        Route::get('/products', function () {
+            return view('admin.products');
+        })->name('products');
 
-    Route::get('/productmanagement', function () {
-        return view('admin.productmanagement');
-    })->name('productmanagement');
+        Route::get('/productmanagement', function () {
+            return view('admin.productmanagement');
+        })->name('productmanagement');
 
-    Route::get('/inventory', function () {
-        return view('admin.inventory');
-    })->name('inventory');
+        Route::get('/inventory', function () {
+            return view('admin.inventory');
+        })->name('inventory');
+    });
 });
