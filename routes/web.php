@@ -5,59 +5,34 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
-use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 // ─── Public Routes ──────────────────────────────────────────────────
 
-Route::get('/about', function () {
-    return view('about');
-});
+Route::get('/', [ProductController::class, 'index'])->name('home');
 
-Route::get('/', [ProductController::class, 'index']);
+Route::get('/about', [ProductController::class, 'about'])->name('about');
 
-Route::get('/frames/men', [ProductController::class, 'men']);
+Route::get('/frames/men', [ProductController::class, 'men'])->name('frames.men');
+Route::get('/frames/women', [ProductController::class, 'women'])->name('frames.women');
 
-Route::get('/frames/women', [ProductController::class, 'women']);
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 
-Route::get('/checkout', function () {
-    $productId = request()->query('product');
-    $product = null;
-    if ($productId) {
-        $product = Product::active()->find($productId);
-    }
-
-    $lenses = Product::active()->where('type', 'lens')->get();
-    $accessories = Product::active()->where('type', 'accessory')->get();
-
-    return view('checkout', [
-        'product' => $product,
-        'lenses' => $lenses,
-        'accessories' => $accessories,
-    ]);
-});
-
-Route::get('/order', [CheckoutController::class, 'placeOrder'])->name('order.place');
-
-// ─── AJAX / Order Routes ────────────────────────────────────────────
-Route::post('/order/send-otp', [CheckoutController::class, 'sendOtp'])->name('order.sendOtp');
-Route::post('/order/resend-otp', [CheckoutController::class, 'resendOtp'])->name('order.resendOtp');
-Route::post('/order/verify-otp', [CheckoutController::class, 'verifyOtp'])->name('order.verifyOtp');
-Route::post('/order/store', [CheckoutController::class, 'storeOrder'])->name('order.store');
-
-Route::get('/framedetail', function () {
-    return view('framedetail');
+Route::prefix('order')->name('order.')->group(function () {
+    Route::get('/', [CheckoutController::class, 'placeOrder'])->name('place');
+    Route::post('/send-otp', [CheckoutController::class, 'sendOtp'])->name('sendOtp');
+    Route::post('/resend-otp', [CheckoutController::class, 'resendOtp'])->name('resendOtp');
+    Route::post('/verify-otp', [CheckoutController::class, 'verifyOtp'])->name('verifyOtp');
+    Route::post('/store', [CheckoutController::class, 'storeOrder'])->name('store');
 });
 
 // ─── Admin Routes (prefix: /admin) ─────────────────────────────────
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    // ── Guest routes (login) ────────────────────────────────────────
     Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AdminController::class, 'login'])->name('login.submit');
 
-    // ── Authenticated routes ────────────────────────────────────────
     Route::middleware('auth')->group(function () {
         Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 
@@ -70,12 +45,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/products', [AdminProductController::class, 'index'])->name('products');
         Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
-
-        // Product edit (single-page with tabs)
         Route::get('/products/{product}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
-
-        // Product movements
         Route::get('/products/{product}/movements', [AdminProductController::class, 'movements'])->name('products.movements');
         Route::post('/products/{product}/movements', [AdminProductController::class, 'storeMovement'])->name('products.movements.store');
 

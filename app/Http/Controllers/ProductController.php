@@ -6,6 +6,11 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
+    public function about()
+    {
+        return view('about');
+    }
+
     /**
      * Display a listing of all products.
      */

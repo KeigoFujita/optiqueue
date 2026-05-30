@@ -16,6 +16,24 @@ use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
+    public function index(Request $request)
+    {
+        $productId = $request->query('product');
+        $product = null;
+        if ($productId) {
+            $product = Product::active()->find($productId);
+        }
+
+        $lenses = Product::active()->where('type', 'lens')->get();
+        $accessories = Product::active()->where('type', 'accessory')->get();
+
+        return view('checkout', [
+            'product' => $product,
+            'lenses' => $lenses,
+            'accessories' => $accessories,
+        ]);
+    }
+
     /**
      * Display the place-order page with product details calculated.
      *
