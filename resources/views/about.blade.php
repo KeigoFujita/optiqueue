@@ -201,11 +201,11 @@
                         perfectly express your style. Experience the Optiqueue difference today.</p>
 
                     <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="/frames/men"
+                        <a href="{{ route('frames.men') }}"
                             class="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-[#1a3c2e] bg-[#f4d03f] rounded-full hover:bg-[#e5c234] transition-all duration-300 shadow-lg shadow-[#f4d03f]/20 hover:shadow-xl hover:shadow-[#f4d03f]/30 hover:-translate-y-0.5">
                             Shop Men's Frames
                         </a>
-                        <a href="/frames/women"
+                        <a href="{{ route('frames.women') }}"
                             class="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-white bg-white/10 border border-white/20 rounded-full hover:bg-white/20 transition-all duration-300">
                             Shop Women's Frames
                         </a>

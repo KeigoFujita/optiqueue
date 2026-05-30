@@ -531,7 +531,7 @@
 
             <!-- Footer -->
             <div class="flex items-center justify-center gap-4 mt-8 animate-in delay-5">
-                <a href="/"
+                <a href="{{ route('home') }}"
                     class="inline-flex items-center gap-2 text-white/20 hover:text-white/50 transition-colors text-xs font-medium">
                     <i class="fa-solid fa-arrow-left text-[10px]"></i>
                     <span>Back to Website</span>

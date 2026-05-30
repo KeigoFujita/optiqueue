@@ -50,7 +50,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">
                 {{-- Logo --}}
-                <a href="/" class="flex items-center gap-2 group" aria-label="Optiqueue Home">
+                <a href="{{ route('home') }}" class="flex items-center gap-2 group" aria-label="Optiqueue Home">
                     <span
                         class="text-2xl md:text-3xl font-bold font-serif tracking-widest text-[#1a3c2e] group-hover:text-[#2a5c3e] transition-colors">Optiqueue</span>
                 </a>
@@ -59,9 +59,9 @@
                 <nav class="hidden md:flex items-center gap-x-10" aria-label="Main navigation">
                     @php
                         $navLinks = [
-                            ['href' => '/frames/men', 'label' => 'Men'],
-                            ['href' => '/frames/women', 'label' => 'Women'],
-                            ['href' => '/about', 'label' => 'About Us'],
+                            ['href' => route('frames.men'), 'label' => 'Men'],
+                            ['href' => route('frames.women'), 'label' => 'Women'],
+                            ['href' => route('about'), 'label' => 'About Us'],
                         ];
                     @endphp
                     @foreach ($navLinks as $link)
@@ -94,9 +94,9 @@
             <div class="px-4 py-6 space-y-4">
                 @php
                     $mobileNavLinks = [
-                        ['href' => '/frames/men', 'label' => 'Men'],
-                        ['href' => '/frames/women', 'label' => 'Women'],
-                        ['href' => '/about', 'label' => 'About Us'],
+                        ['href' => route('frames.men'), 'label' => 'Men'],
+                        ['href' => route('frames.women'), 'label' => 'Women'],
+                        ['href' => route('about'), 'label' => 'About Us'],
                     ];
                 @endphp
                 @foreach ($mobileNavLinks as $link)
@@ -130,8 +130,8 @@
                 <div>
                     <h4 class="text-white font-medium mb-4">Shop</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="/frames/men" class="hover:text-white transition-colors">Men's Frames</a></li>
-                        <li><a href="/frames/women" class="hover:text-white transition-colors">Women's Frames</a></li>
+                        <li><a href="{{ route('frames.men') }}" class="hover:text-white transition-colors">Men's Frames</a></li>
+                        <li><a href="{{ route('frames.women') }}" class="hover:text-white transition-colors">Women's Frames</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Best Sellers</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">New Arrivals</a></li>
                     </ul>
@@ -140,7 +140,7 @@
                 <div>
                     <h4 class="text-white font-medium mb-4">Company</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="/about" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-white transition-colors">About Us</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Our Story</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Sustainability</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>

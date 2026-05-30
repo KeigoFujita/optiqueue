@@ -164,7 +164,7 @@
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {{-- Men's --}}
-                <a href="/frames/men" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
+                <a href="{{ route('frames.men') }}" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
                     <img src="https://images.unsplash.com/photo-1591076482161-42ce6da69f67?w=600&q=80&auto=format&fit=crop"
                         alt="Collection of men's eyewear frames in modern designs"
                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -177,7 +177,7 @@
                 </a>
 
                 {{-- Women's --}}
-                <a href="/frames/women" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
+                <a href="{{ route('frames.women') }}" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
                     <img src="https://images.unsplash.com/photo-1591076482161-42ce6da69f67?w=600&q=80&auto=format&fit=crop"
                         alt="Collection of women's eyewear frames in elegant styles"
                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -190,7 +190,7 @@
                 </a>
 
                 {{-- Lens --}}
-                <a href="/products" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
+                <a href="{{ route('home') }}" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
                     <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&q=80&auto=format&fit=crop"
                         alt="Premium lens collection for crystal clear vision"
                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -203,7 +203,7 @@
                 </a>
 
                 {{-- Accessories --}}
-                <a href="/products" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
+                <a href="{{ route('home') }}" class="group relative rounded-2xl overflow-hidden aspect-[3/4] reveal">
                     <img src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&q=80&auto=format&fit=crop"
                         alt="Eyewear accessories and care products"
                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -231,7 +231,7 @@
                     <h2 id="bestsellers-heading"
                         class="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Most Loved Frames</h2>
                 </div>
-                <a href="/products"
+                <a href="{{ route('home') }}"
                     class="group inline-flex items-center gap-2 mt-4 md:mt-0 text-sm font-semibold text-[#1a3c2e] hover:text-[#2a5c3e] transition-colors">
                     View All
                     <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none"

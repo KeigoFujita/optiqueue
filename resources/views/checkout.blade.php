@@ -10,7 +10,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             {{-- Breadcrumb --}}
             <nav class="flex items-center gap-2 text-sm text-gray-400 mb-6" aria-label="Breadcrumb">
-                <a href="/" class="hover:text-[#1a3c2e] transition-colors duration-300">Home</a>
+                <a href="{{ route('home') }}" class="hover:text-[#1a3c2e] transition-colors duration-300">Home</a>
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
@@ -314,7 +314,7 @@
                     if (state.frameId !== null) params.set('frame_id', state.frameId);
                     if (state.lensId !== null) params.set('lens_id', state.lensId);
                     if (state.accessoryId !== null) params.set('accessory_id', state.accessoryId);
-                    window.location.href = '/order?' + params.toString();
+                    window.location.href = '{{ route('order.place') }}?' + params.toString();
                 };
                 // ============================================================
                 // SCROLL REVEAL ANIMATIONS
