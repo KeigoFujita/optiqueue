@@ -245,13 +245,15 @@ class CheckoutController extends Controller
                 // ── Deduct stock and record product movement ──────────
                 $product = Product::findOrFail($item['product_id']);
 
-                if ($product->stocks < $item['quantity']) {
+                $updated = Product::where('id', $item['product_id'])
+                    ->where('stocks', '>=', $item['quantity'])
+                    ->decrement('stocks', $item['quantity']);
+
+                if ($updated === 0) {
                     throw new \RuntimeException(
                         "Insufficient stock for product '{$product->name}': only {$product->stocks} left, requested {$item['quantity']}."
                     );
                 }
-
-                $product->decrement('stocks', $item['quantity']);
 
                 ProductMovement::create([
                     'product_id' => $product->id,
