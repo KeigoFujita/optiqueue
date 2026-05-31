@@ -174,7 +174,7 @@
                                     <td colspan="6" class="text-center py-8 text-gray-400">
                                         <div class="flex flex-col items-center gap-2">
                                             <i class="fa-solid fa-box-open text-2xl text-gray-300"></i>
-                                            <span>No movements found{{ $selectedMonth ? ' for this month' : '' }}</span>
+                                            <span>No movements found{{ isset($selectedMonth) && $selectedMonth ? ' for this month' : '' }}</span>
                                         </div>
                                     </td>
                                 </tr>

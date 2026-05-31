@@ -44,7 +44,7 @@ class ProductController extends Controller
         }
 
         // ── Order by newest first ──────────────────────────────
-        $query->orderBy('created_at', 'desc');
+        $query->orderBy('created_at', 'desc')->orderBy('id', 'desc');
 
         $products = $query->get();
 

@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Database\Factories\ProductMovementFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductMovement extends Model
 {
+    /** @use HasFactory<ProductMovementFactory> */
+    use HasFactory;
     /*
     |--------------------------------------------------------------------------
     | Movement Type & Category Reference
