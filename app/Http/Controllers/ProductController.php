@@ -16,22 +16,21 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::active()->get();
         $bestSellers = Product::active()->where('badge', 'Bestseller')->get();
 
-        // ── Category counts for "Shop by Category" section ──────
-        $menCount = Product::active()->where('category', 'men')->where('type', 'frame')->count();
-        $womenCount = Product::active()->where('category', 'women')->where('type', 'frame')->count();
-        $lensCount = Product::active()->where('type', 'lens')->count();
-        $accessoriesCount = Product::active()->where('type', 'accessory')->count();
+        $counts = Product::active()->selectRaw("
+            SUM(CASE WHEN category = 'men'   AND type = 'frame'     THEN 1 ELSE 0 END) as men_count,
+            SUM(CASE WHEN category = 'women' AND type = 'frame'     THEN 1 ELSE 0 END) as women_count,
+            SUM(CASE WHEN type = 'lens'                             THEN 1 ELSE 0 END) as lens_count,
+            SUM(CASE WHEN type = 'accessory'                        THEN 1 ELSE 0 END) as accessories_count
+        ")->first();
 
         return view('index', [
-            'products' => $products,
             'bestSellers' => $bestSellers,
-            'menCount' => $menCount,
-            'womenCount' => $womenCount,
-            'lensCount' => $lensCount,
-            'accessoriesCount' => $accessoriesCount,
+            'menCount' => (int) $counts->men_count,
+            'womenCount' => (int) $counts->women_count,
+            'lensCount' => (int) $counts->lens_count,
+            'accessoriesCount' => (int) $counts->accessories_count,
         ]);
     }
 

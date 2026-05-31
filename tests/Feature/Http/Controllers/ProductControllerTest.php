@@ -14,7 +14,7 @@ describe('ProductController', function () {
     });
 
     describe('index()', function () {
-        it('renders the home page with active products and category counts', function () {
+        it('renders the home page with best sellers and category counts', function () {
             Product::factory(2)->frame()->create(['category' => 'men']);
             Product::factory(3)->frame()->create(['category' => 'women']);
             Product::factory()->lens()->create(['category' => 'men', 'price' => 1000]);
@@ -26,15 +26,11 @@ describe('ProductController', function () {
 
             $response->assertOk();
             $response->assertViewIs('index');
-            $response->assertViewHas('products');
             $response->assertViewHas('bestSellers');
             $response->assertViewHas('menCount', 3);
             $response->assertViewHas('womenCount', 3);
             $response->assertViewHas('lensCount', 1);
             $response->assertViewHas('accessoriesCount', 1);
-
-            $products = $response->viewData('products');
-            expect($products)->toHaveCount(8);
 
             $bestSellers = $response->viewData('bestSellers');
             expect($bestSellers)->toHaveCount(1);
@@ -45,17 +41,17 @@ describe('ProductController', function () {
             $response = $this->get(route('home'));
 
             $response->assertOk();
-            expect($response->viewData('products'))->toHaveCount(0);
+            expect($response->viewData('bestSellers'))->toHaveCount(0);
             expect($response->viewData('menCount'))->toBe(0);
         });
 
-        it('excludes inactive products', function () {
-            Product::factory(3)->create(['category' => 'men', 'type' => 'frame']);
-            Product::factory()->inactive()->create(['category' => 'women', 'type' => 'frame']);
+        it('excludes inactive products from best sellers', function () {
+            Product::factory()->bestseller()->create(['category' => 'men', 'type' => 'frame']);
+            Product::factory()->inactive()->bestseller()->create(['category' => 'women', 'type' => 'frame']);
 
             $response = $this->get(route('home'));
 
-            expect($response->viewData('products'))->toHaveCount(3);
+            expect($response->viewData('bestSellers'))->toHaveCount(1);
         });
     });
 

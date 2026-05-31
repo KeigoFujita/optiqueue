@@ -45,10 +45,13 @@ class CheckoutController extends Controller
         $lensId = $request->query('lens_id');
         $accessoryId = $request->query('accessory_id');
 
-        // Look up products from the database
-        $frame = $frameId ? Product::find($frameId) : null;
-        $lens = $lensId ? Product::find($lensId) : null;
-        $accessory = $accessoryId ? Product::find($accessoryId) : null;
+        // Look up products in a single query
+        $ids = array_filter([$frameId, $lensId, $accessoryId]);
+        $products = ! empty($ids) ? Product::whereIn('id', $ids)->get()->keyBy('id') : collect([]);
+
+        $frame = $frameId ? $products->get($frameId) : null;
+        $lens = $lensId ? $products->get($lensId) : null;
+        $accessory = $accessoryId ? $products->get($accessoryId) : null;
 
         // Calculate prices
         $framePrice = $frame ? (int) $frame->price : 0;
