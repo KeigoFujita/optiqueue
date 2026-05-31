@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardDataController;
+use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -30,14 +33,14 @@ Route::prefix('order')->name('order.')->group(function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminController::class, 'login'])->name('login.submit');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
     Route::middleware('auth')->group(function () {
-        Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-        Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('dashboard.data');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/data', DashboardDataController::class)->name('dashboard.data');
 
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
@@ -50,6 +53,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/products/{product}/movements', [AdminProductController::class, 'movements'])->name('products.movements');
         Route::post('/products/{product}/movements', [AdminProductController::class, 'storeMovement'])->name('products.movements.store');
 
-        Route::get('/inventory', [AdminController::class, 'inventory'])->name('inventory');
+        Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory');
     });
 });
