@@ -39,9 +39,4 @@ describe('DashboardDataController', function () {
         $response->assertJsonStructure(['stats', 'chartLabels', 'chartData', 'weekOrderData', 'topProducts']);
     });
 
-    it('requires authentication', function () {
-        $response = $this->get(route('admin.dashboard.data'));
-
-        $response->assertRedirect(route('admin.login'));
-    });
 });

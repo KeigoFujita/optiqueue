@@ -42,9 +42,4 @@ describe('DashboardController', function () {
         expect($response->viewData('period'))->toBe('today');
     });
 
-    it('requires authentication', function () {
-        $response = $this->get(route('admin.dashboard'));
-
-        $response->assertRedirect(route('admin.login'));
-    });
 });

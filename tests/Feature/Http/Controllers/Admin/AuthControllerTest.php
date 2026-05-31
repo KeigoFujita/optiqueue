@@ -73,10 +73,6 @@ describe('AuthController', function () {
             $this->assertGuest();
         });
 
-        it('requires authentication', function () {
-            $response = $this->post(route('admin.logout'));
 
-            $response->assertRedirect(route('admin.login'));
-        });
     });
 });

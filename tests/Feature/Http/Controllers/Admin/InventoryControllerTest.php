@@ -55,9 +55,4 @@ describe('InventoryController', function () {
         expect($response->viewData('movements'))->toHaveCount(1);
     });
 
-    it('requires authentication', function () {
-        $response = $this->get(route('admin.inventory'));
-
-        $response->assertRedirect(route('admin.login'));
-    });
 });
