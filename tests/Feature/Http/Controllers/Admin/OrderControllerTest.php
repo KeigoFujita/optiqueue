@@ -146,6 +146,14 @@ describe('OrderController', function () {
             expect($order->fresh()->status)->toBe('cancelled');
         });
 
+        it('returns 404 for non-existent order', function () {
+            $response = $this->actingAs($this->admin)->put(route('admin.orders.updateStatus', 99999), [
+                'status' => 'processing',
+            ]);
+
+            $response->assertNotFound();
+        });
+
         it('validates status field', function () {
             $order = Order::factory()->create();
 
@@ -164,14 +172,6 @@ describe('OrderController', function () {
             ]);
 
             $response->assertSessionHasErrors(['status']);
-        });
-
-        it('returns 404 for non-existent order', function () {
-            $response = $this->actingAs($this->admin)->put(route('admin.orders.updateStatus', 99999), [
-                'status' => 'processing',
-            ]);
-
-            $response->assertNotFound();
         });
     });
 });

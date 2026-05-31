@@ -73,6 +73,5 @@ describe('AuthController', function () {
             $this->assertGuest();
         });
 
-
     });
 });

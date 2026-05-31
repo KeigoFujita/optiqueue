@@ -10,6 +10,17 @@ use Illuminate\Support\Facades\Mail;
 describe('CheckoutController', function () {
 
     describe('index()', function () {
+        it('accepts a valid product query parameter', function () {
+            $product = Product::factory()->frame()->create(['price' => 1500]);
+            Product::factory(2)->lens()->create();
+            Product::factory(2)->accessory()->create();
+
+            $response = $this->get(route('checkout', ['product' => $product->id]));
+
+            $response->assertOk();
+            expect($response->viewData('product')->id)->toBe($product->id);
+        });
+
         it('redirects to home when no product parameter is provided', function () {
             $response = $this->get(route('checkout'));
 
@@ -20,17 +31,6 @@ describe('CheckoutController', function () {
             $response = $this->get(route('checkout', ['product' => '']));
 
             $response->assertRedirect(route('home'));
-        });
-
-        it('accepts a valid product query parameter', function () {
-            $product = Product::factory()->frame()->create(['price' => 1500]);
-            Product::factory(2)->lens()->create();
-            Product::factory(2)->accessory()->create();
-
-            $response = $this->get(route('checkout', ['product' => $product->id]));
-
-            $response->assertOk();
-            expect($response->viewData('product')->id)->toBe($product->id);
         });
 
         it('redirects to home for an inactive product', function () {
@@ -125,14 +125,6 @@ describe('CheckoutController', function () {
             });
         });
 
-        it('requires a valid email', function () {
-            $response = $this->post(route('order.sendOtp'), [
-                'email' => '',
-            ]);
-
-            $response->assertSessionHasErrors(['email']);
-        });
-
         it('updates existing customer OTP on repeated requests', function () {
             $customer = Customer::factory()->create([
                 'email' => 'jane@example.com',
@@ -148,6 +140,14 @@ describe('CheckoutController', function () {
             $customer->refresh();
             expect($customer->otp)->not->toBe('000000');
             expect($customer->otp_expires_at)->toBeGreaterThan(now());
+        });
+
+        it('requires a valid email', function () {
+            $response = $this->post(route('order.sendOtp'), [
+                'email' => '',
+            ]);
+
+            $response->assertSessionHasErrors(['email']);
         });
     });
 
@@ -388,7 +388,7 @@ describe('CheckoutController', function () {
             ]);
         });
 
-        it('returns 422 for missing customer when email does not exist', function () {
+        it('returns 500 for missing customer when email does not exist', function () {
             $response = $this->post(route('order.store'), [
                 'email' => 'ghost@example.com',
                 'name' => 'Ghost',
@@ -399,16 +399,6 @@ describe('CheckoutController', function () {
             $response->assertJson([
                 'success' => false,
             ]);
-        });
-
-        it('validates required fields', function () {
-            $response = $this->post(route('order.store'), [
-                'email' => '',
-                'name' => '',
-                'contact' => '',
-            ]);
-
-            $response->assertSessionHasErrors(['email', 'name', 'contact']);
         });
 
         it('handles insufficient stock gracefully', function () {
@@ -432,6 +422,16 @@ describe('CheckoutController', function () {
             expect($frame->stocks)->toBe(0);
 
             Mail::assertNotSent(OrderConfirmationMail::class);
+        });
+
+        it('validates required fields', function () {
+            $response = $this->post(route('order.store'), [
+                'email' => '',
+                'name' => '',
+                'contact' => '',
+            ]);
+
+            $response->assertSessionHasErrors(['email', 'name', 'contact']);
         });
     });
 });
