@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SendOtpRequest;
+use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\VerifyOtpRequest;
 use App\Mail\OrderConfirmationMail;
 use App\Mail\OtpMail;
 use App\Models\Customer;
@@ -77,13 +80,9 @@ class CheckoutController extends Controller
      * Send OTP to the given email.
      * Creates a new customer or updates existing one with a fresh OTP.
      */
-    public function sendOtp(Request $request)
+    public function sendOtp(SendOtpRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
-
-        $email = $request->input('email');
+        $email = $request->validated('email');
         $otp = Customer::generateOtp();
 
         // Find or create customer by email
@@ -110,13 +109,9 @@ class CheckoutController extends Controller
     /**
      * Resend a new OTP to the customer's email.
      */
-    public function resendOtp(Request $request)
+    public function resendOtp(SendOtpRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
-
-        $email = $request->input('email');
+        $email = $request->validated('email');
         $customer = Customer::where('email', $email)->first();
 
         if (! $customer) {
@@ -150,15 +145,10 @@ class CheckoutController extends Controller
      * Verify the OTP entered by the customer.
      * If valid, update verified_at timestamp.
      */
-    public function verifyOtp(Request $request)
+    public function verifyOtp(VerifyOtpRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required|string|size:6',
-        ]);
-
-        $email = $request->input('email');
-        $otp = $request->input('otp');
+        $email = $request->validated('email');
+        $otp = $request->validated('otp');
 
         $customer = Customer::where('email', $email)->first();
 
@@ -189,23 +179,14 @@ class CheckoutController extends Controller
         ]);
     }
 
-    public function storeOrder(Request $request)
+    public function storeOrder(StoreOrderRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'name' => 'required|string|max:255',
-            'contact' => 'required|string|max:20',
-            'frame_id' => 'nullable|integer|exists:products,id',
-            'lens_id' => 'nullable|integer|exists:products,id',
-            'accessory_id' => 'nullable|integer|exists:products,id',
-        ]);
-
-        $email = $request->input('email');
-        $name = $request->input('name');
-        $contact = $request->input('contact');
-        $frameId = $request->input('frame_id');
-        $lensId = $request->input('lens_id');
-        $accessoryId = $request->input('accessory_id');
+        $email = $request->validated('email');
+        $name = $request->validated('name');
+        $contact = $request->validated('contact');
+        $frameId = $request->validated('frame_id');
+        $lensId = $request->validated('lens_id');
+        $accessoryId = $request->validated('accessory_id');
 
         // Begin database transaction
         try {

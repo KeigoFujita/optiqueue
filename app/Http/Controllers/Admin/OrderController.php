@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Mail\OrderStatusMail;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
@@ -98,15 +99,11 @@ class OrderController extends Controller
     /**
      * Update the order status and send an email notification.
      */
-    public function updateStatus(Request $request, int $id): JsonResponse
+    public function updateStatus(UpdateOrderStatusRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'status' => 'required|in:pending,processing,ready,picked-up,cancelled',
-        ]);
-
         $order = Order::with('customer')->findOrFail($id);
         $oldStatus = $order->status;
-        $newStatus = $request->status;
+        $newStatus = $request->validated('status');
 
         // Prevent editing if already in a terminal state
         if (in_array($oldStatus, ['picked-up', 'cancelled'])) {

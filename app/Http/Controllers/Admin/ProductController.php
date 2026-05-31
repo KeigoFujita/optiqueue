@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreMovementRequest;
+use App\Http\Requests\StoreProductRequest;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -58,53 +60,41 @@ class ProductController extends Controller
     /**
      * Store a newly created product in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreProductRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:1000',
-            'category' => 'required|string|in:men,women,lenses,accessories',
-            'type' => 'required|string|in:frame,lens,accessory',
-            'price' => 'required|numeric|min:0',
-            'old_price' => 'nullable|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,avif|max:2048',
-            'icon' => 'nullable|string|max:50',
-            'badge' => 'nullable|string|max:255',
-            'badge_color' => 'nullable|string|max:20',
-            'stocks' => 'nullable|integer|min:0',
-            'status' => 'required|in:active,archived',
-        ]);
-
         // ── Determine image subdirectory based on type & category ─
         // frames go into frames/{men|women}, lens/accessory use their type folder
-        if ($validated['type'] === 'frame') {
-            $subDir = 'frames/'.$validated['category']; // frames/men or frames/women
+        $type = $request->validated('type');
+        $category = $request->validated('category');
+
+        if ($type === 'frame') {
+            $subDir = 'frames/'.$category; // frames/men or frames/women
         } else {
-            $subDir = $validated['type'].'s'; // lenses or accessories
+            $subDir = $type.'s'; // lenses or accessories
         }
 
         // ── Handle image upload ─────────────────────────────────
         $imagePath = '';
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
-            $filename = Str::slug($validated['name']).'.'.$extension;
+            $filename = Str::slug($request->validated('name')).'.'.$extension;
             $imagePath = $request->file('image')->storeAs($subDir, $filename, 'public');
         }
 
         // ── Create product ──────────────────────────────────────
         $product = Product::create([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'category' => $validated['category'],
-            'type' => $validated['type'],
-            'price' => $validated['price'],
-            'old_price' => $validated['old_price'] ?? null,
+            'name' => $request->validated('name'),
+            'description' => $request->validated('description'),
+            'category' => $category,
+            'type' => $type,
+            'price' => $request->validated('price'),
+            'old_price' => $request->validated('old_price'),
             'image_path' => $imagePath,
-            'icon' => $validated['icon'] ?? null,
-            'badge' => $validated['badge'] ?? null,
-            'badge_color' => $validated['badge_color'] ?? null,
-            'stocks' => $validated['stocks'] ?? 0,
-            'status' => $validated['status'],
+            'icon' => $request->validated('icon'),
+            'badge' => $request->validated('badge'),
+            'badge_color' => $request->validated('badge_color'),
+            'stocks' => $request->validated('stocks', 0),
+            'status' => $request->validated('status'),
         ]);
 
         return response()->json([
@@ -127,28 +117,16 @@ class ProductController extends Controller
     /**
      * Update the specified product in storage.
      */
-    public function update(Request $request, Product $product): JsonResponse
+    public function update(StoreProductRequest $request, Product $product): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:1000',
-            'category' => 'required|string|in:men,women,lenses,accessories',
-            'type' => 'required|string|in:frame,lens,accessory',
-            'price' => 'required|numeric|min:0',
-            'old_price' => 'nullable|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,avif|max:2048',
-            'icon' => 'nullable|string|max:50',
-            'badge' => 'nullable|string|max:255',
-            'badge_color' => 'nullable|string|max:20',
-            'stocks' => 'nullable|integer|min:0',
-            'status' => 'required|in:active,archived',
-        ]);
-
         // ── Determine image subdirectory based on type & category ─
-        if ($validated['type'] === 'frame') {
-            $subDir = 'frames/'.$validated['category'];
+        $type = $request->validated('type');
+        $category = $request->validated('category');
+
+        if ($type === 'frame') {
+            $subDir = 'frames/'.$category;
         } else {
-            $subDir = $validated['type'].'s';
+            $subDir = $type.'s';
         }
 
         // ── Handle image upload ─────────────────────────────────
@@ -159,7 +137,7 @@ class ProductController extends Controller
             }
 
             $extension = $request->file('image')->extension();
-            $filename = Str::slug($validated['name']).'.'.$extension;
+            $filename = Str::slug($request->validated('name')).'.'.$extension;
             $imagePath = $request->file('image')->storeAs($subDir, $filename, 'public');
         } else {
             $imagePath = $product->image_path;
@@ -167,18 +145,18 @@ class ProductController extends Controller
 
         // ── Update product ──────────────────────────────────────
         $product->update([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'category' => $validated['category'],
-            'type' => $validated['type'],
-            'price' => $validated['price'],
-            'old_price' => $validated['old_price'] ?? null,
+            'name' => $request->validated('name'),
+            'description' => $request->validated('description'),
+            'category' => $category,
+            'type' => $type,
+            'price' => $request->validated('price'),
+            'old_price' => $request->validated('old_price'),
             'image_path' => $imagePath,
-            'icon' => $validated['icon'] ?? null,
-            'badge' => $validated['badge'] ?? null,
-            'badge_color' => $validated['badge_color'] ?? null,
-            'stocks' => $validated['stocks'] ?? 0,
-            'status' => $validated['status'],
+            'icon' => $request->validated('icon'),
+            'badge' => $request->validated('badge'),
+            'badge_color' => $request->validated('badge_color'),
+            'stocks' => $request->validated('stocks', 0),
+            'status' => $request->validated('status'),
         ]);
 
         return response()->json([
@@ -208,23 +186,15 @@ class ProductController extends Controller
     /**
      * Store a new product movement.
      */
-    public function storeMovement(Request $request, Product $product): JsonResponse
+    public function storeMovement(StoreMovementRequest $request, Product $product): JsonResponse
     {
-        $validated = $request->validate([
-            'movement_type' => 'required|string|in:in,out',
-            'movement_category' => 'required|string',
-            'quantity' => 'required|integer|min:1',
-            'movement_date' => 'required|date',
-            'reference_id' => 'nullable|string|max:255',
-        ]);
-
-        $movement = $product->movements()->create($validated);
+        $movement = $product->movements()->create($request->validated());
 
         // Update product stocks based on movement type
-        if ($validated['movement_type'] === 'in') {
-            $product->increment('stocks', $validated['quantity']);
-        } elseif ($validated['movement_type'] === 'out') {
-            $product->decrement('stocks', $validated['quantity']);
+        if ($request->validated('movement_type') === 'in') {
+            $product->increment('stocks', $request->validated('quantity'));
+        } elseif ($request->validated('movement_type') === 'out') {
+            $product->decrement('stocks', $request->validated('quantity'));
         }
         // adjustments don't auto-update stock (manual correction)
 
