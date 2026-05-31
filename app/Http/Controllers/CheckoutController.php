@@ -22,9 +22,9 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $productId = $request->query('product');
-        $product = null;
-        if ($productId) {
-            $product = Product::active()->find($productId);
+
+        if (! $productId || ! $product = Product::active()->find($productId)) {
+            return redirect()->route('home');
         }
 
         $lenses = Product::active()->where('type', 'lens')->get();

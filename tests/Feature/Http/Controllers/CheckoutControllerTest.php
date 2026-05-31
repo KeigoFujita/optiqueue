@@ -10,20 +10,19 @@ use Illuminate\Support\Facades\Mail;
 describe('CheckoutController', function () {
 
     describe('index()', function () {
-        it('returns checkout page with lenses and accessories', function () {
-            Product::factory()->lens()->create(['price' => 500]);
-            Product::factory()->accessory()->create(['price' => 300]);
-
+        it('redirects to home when no product parameter is provided', function () {
             $response = $this->get(route('checkout'));
 
-            $response->assertOk();
-            $response->assertViewIs('checkout');
-            expect($response->viewData('product'))->toBeNull();
-            expect($response->viewData('lenses'))->toHaveCount(1);
-            expect($response->viewData('accessories'))->toHaveCount(1);
+            $response->assertRedirect(route('home'));
         });
 
-        it('accepts a product query parameter', function () {
+        it('redirects to home when product parameter is missing', function () {
+            $response = $this->get(route('checkout', ['product' => '']));
+
+            $response->assertRedirect(route('home'));
+        });
+
+        it('accepts a valid product query parameter', function () {
             $product = Product::factory()->frame()->create(['price' => 1500]);
             Product::factory(2)->lens()->create();
             Product::factory(2)->accessory()->create();
@@ -34,24 +33,18 @@ describe('CheckoutController', function () {
             expect($response->viewData('product')->id)->toBe($product->id);
         });
 
-        it('ignores an invalid or inactive product parameter', function () {
-            Product::factory()->inactive()->create(['id' => 999]);
-            Product::factory(2)->lens()->create();
-            Product::factory(2)->accessory()->create();
+        it('redirects to home for an inactive product', function () {
+            $product = Product::factory()->inactive()->create();
 
-            $response = $this->get(route('checkout', ['product' => 999]));
+            $response = $this->get(route('checkout', ['product' => $product->id]));
 
-            $response->assertOk();
-            expect($response->viewData('product'))->toBeNull();
+            $response->assertRedirect(route('home'));
         });
 
-        it('handles no lenses or accessories gracefully', function () {
-            $response = $this->get(route('checkout'));
+        it('redirects to home for a non-existent product', function () {
+            $response = $this->get(route('checkout', ['product' => 99999]));
 
-            $response->assertOk();
-            expect($response->viewData('lenses'))->toHaveCount(0);
-            expect($response->viewData('accessories'))->toHaveCount(0);
-            expect($response->viewData('product'))->toBeNull();
+            $response->assertRedirect(route('home'));
         });
     });
 
