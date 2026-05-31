@@ -9,7 +9,6 @@ describe('Authenticate middleware', function () {
         it('redirects unauthenticated GET requests to the login page')
             ->with([
                 '/admin/dashboard',
-                '/admin/dashboard/data',
                 '/admin/orders',
                 '/admin/orders/1',
                 '/admin/products',
