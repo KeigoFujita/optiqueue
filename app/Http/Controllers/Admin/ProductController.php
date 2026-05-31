@@ -193,8 +193,6 @@ class ProductController extends Controller
      */
     public function movements(Product $product): View
     {
-        $product->load('movements');
-
         $movements = $product->movements()->orderBy('movement_date', 'desc')->get();
         $totalIn = $movements->where('movement_type', 'in')->sum('quantity');
         $totalOut = $movements->whereIn('movement_type', ['out', 'adjustment'])->sum('quantity');
