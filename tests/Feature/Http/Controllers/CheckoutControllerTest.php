@@ -49,27 +49,6 @@ describe('CheckoutController', function () {
     });
 
     describe('placeOrder()', function () {
-        it('returns place-order page with no products selected', function () {
-            $response = $this->get(route('order.place'));
-
-            $response->assertOk();
-            $response->assertViewIs('place-order');
-            expect($response->viewData('frame'))->toBeNull();
-            expect($response->viewData('lens'))->toBeNull();
-            expect($response->viewData('accessory'))->toBeNull();
-            expect($response->viewData('total'))->toBe(0);
-        });
-
-        it('calculates price with a single frame', function () {
-            $frame = Product::factory()->frame()->create(['price' => 2500]);
-
-            $response = $this->get(route('order.place', ['frame_id' => $frame->id]));
-
-            $response->assertOk();
-            expect($response->viewData('framePrice'))->toBe(2500);
-            expect($response->viewData('total'))->toBe(2500);
-        });
-
         it('calculates total with frame, lens, and accessory', function () {
             $frame = Product::factory()->frame()->create(['price' => 2500]);
             $lens = Product::factory()->lens()->create(['price' => 800]);
@@ -88,13 +67,90 @@ describe('CheckoutController', function () {
             expect($response->viewData('total'))->toBe(3650);
         });
 
-        it('treats missing products as zero price', function () {
+        it('redirects to home when no products are selected', function () {
+            $response = $this->get(route('order.place'));
+
+            $response->assertRedirect(route('home'));
+        });
+
+        it('redirects to home when frame does not exist', function () {
             $response = $this->get(route('order.place', ['frame_id' => 99999]));
 
-            $response->assertOk();
-            expect($response->viewData('frame'))->toBeNull();
-            expect($response->viewData('framePrice'))->toBe(0);
-            expect($response->viewData('total'))->toBe(0);
+            $response->assertRedirect(route('home'));
+        });
+
+        it('redirects to home when frame type is not a frame', function () {
+            $lens = Product::factory()->lens()->create();
+
+            $response = $this->get(route('order.place', ['frame_id' => $lens->id]));
+
+            $response->assertRedirect(route('home'));
+        });
+
+        it('redirects to home when frame is invalid even if lens is valid', function () {
+            $lens = Product::factory()->lens()->create();
+
+            $response = $this->get(route('order.place', [
+                'frame_id' => 99999,
+                'lens_id' => $lens->id,
+            ]));
+
+            $response->assertRedirect(route('home'));
+        });
+
+        it('redirects to home when only lens is provided and does not exist', function () {
+            $response = $this->get(route('order.place', ['lens_id' => 99999]));
+
+            $response->assertRedirect(route('home'));
+        });
+
+        it('redirects to home when only accessory is provided and does not exist', function () {
+            $response = $this->get(route('order.place', ['accessory_id' => 99999]));
+
+            $response->assertRedirect(route('home'));
+        });
+
+        it('redirects to checkout when only frame is provided without lens and accessory', function () {
+            $frame = Product::factory()->frame()->create();
+
+            $response = $this->get(route('order.place', ['frame_id' => $frame->id]));
+
+            $response->assertRedirect(route('checkout', ['product' => $frame->id]));
+        });
+
+        it('redirects to checkout when frame is valid but lens does not exist', function () {
+            $frame = Product::factory()->frame()->create();
+
+            $response = $this->get(route('order.place', [
+                'frame_id' => $frame->id,
+                'lens_id' => 99999,
+            ]));
+
+            $response->assertRedirect(route('checkout', ['product' => $frame->id]));
+        });
+
+        it('redirects to checkout when frame is valid but lens type is wrong', function () {
+            $frame = Product::factory()->frame()->create();
+            $frameAsLens = Product::factory()->frame()->create();
+
+            $response = $this->get(route('order.place', [
+                'frame_id' => $frame->id,
+                'lens_id' => $frameAsLens->id,
+            ]));
+
+            $response->assertRedirect(route('checkout', ['product' => $frame->id]));
+        });
+
+        it('redirects to checkout when frame is valid but accessory type is wrong', function () {
+            $frame = Product::factory()->frame()->create();
+            $lensAsAccessory = Product::factory()->lens()->create();
+
+            $response = $this->get(route('order.place', [
+                'frame_id' => $frame->id,
+                'accessory_id' => $lensAsAccessory->id,
+            ]));
+
+            $response->assertRedirect(route('checkout', ['product' => $frame->id]));
         });
     });
 

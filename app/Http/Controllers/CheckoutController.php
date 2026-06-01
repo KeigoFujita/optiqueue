@@ -48,28 +48,30 @@ class CheckoutController extends Controller
         $lensId = $request->query('lens_id');
         $accessoryId = $request->query('accessory_id');
 
-        // Look up products in a single query
-        $ids = array_filter([$frameId, $lensId, $accessoryId]);
-        $products = ! empty($ids) ? Product::whereIn('id', $ids)->get()->keyBy('id') : collect([]);
+        $frame = $frameId ? Product::find($frameId) : null;
+        $lens = $lensId ? Product::find($lensId) : null;
+        $accessory = $accessoryId ? Product::find($accessoryId) : null;
 
-        $frame = $frameId ? $products->get($frameId) : null;
-        $lens = $lensId ? $products->get($lensId) : null;
-        $accessory = $accessoryId ? $products->get($accessoryId) : null;
+        $frameValid = $frame && $frame->type === 'frame';
+        $lensValid = $lens && $lens->type === 'lens';
+        $accessoryValid = $accessory && $accessory->type === 'accessory';
 
-        // Calculate prices
-        $framePrice = $frame ? (int) $frame->price : 0;
-        $lensPrice = $lens ? (int) $lens->price : 0;
-        $accessoryPrice = $accessory ? (int) $accessory->price : 0;
-        $total = $framePrice + $lensPrice + $accessoryPrice;
+        if (! $frameValid) {
+            return redirect()->route('home');
+        }
+
+        if (! $lensValid || ! $accessoryValid) {
+            return redirect()->route('checkout', ['product' => $frameId]);
+        }
 
         return view('place-order', [
             'frame' => $frame,
             'lens' => $lens,
             'accessory' => $accessory,
-            'framePrice' => $framePrice,
-            'lensPrice' => $lensPrice,
-            'accessoryPrice' => $accessoryPrice,
-            'total' => $total,
+            'framePrice' => (int) $frame->price,
+            'lensPrice' => (int) $lens->price,
+            'accessoryPrice' => (int) $accessory->price,
+            'total' => (int) $frame->price + (int) $lens->price + (int) $accessory->price,
             'frameId' => $frameId,
             'lensId' => $lensId,
             'accessoryId' => $accessoryId,
