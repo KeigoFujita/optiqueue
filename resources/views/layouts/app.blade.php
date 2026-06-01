@@ -59,14 +59,14 @@
                 <nav class="hidden md:flex items-center gap-x-10" aria-label="Main navigation">
                     @php
                         $navLinks = [
-                            ['href' => route('frames.men'), 'label' => 'Men'],
-                            ['href' => route('frames.women'), 'label' => 'Women'],
-                            ['href' => route('about'), 'label' => 'About Us'],
+                            ['route' => 'frames.men', 'label' => 'Men'],
+                            ['route' => 'frames.women', 'label' => 'Women'],
+                            ['route' => 'about', 'label' => 'About Us'],
                         ];
                     @endphp
                     @foreach ($navLinks as $link)
-                        @php $isActive = request()->is(ltrim($link['href'], '/')) @endphp
-                        <a href="{{ $link['href'] }}"
+                        @php $isActive = request()->routeIs($link['route']) @endphp
+                        <a href="{{ route($link['route']) }}"
                             class="text-sm font-medium transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:bg-[#1a3c2e] after:transition-all {{ $isActive ? 'text-[#1a3c2e] after:w-full' : 'text-gray-600 hover:text-[#1a3c2e] after:w-0 hover:after:w-full' }}">{{ $link['label'] }}</a>
                     @endforeach
                 </nav>
@@ -92,16 +92,9 @@
         {{-- Mobile Menu --}}
         <div class="md:hidden hidden border-t border-gray-100 bg-white" id="mobile-menu">
             <div class="px-4 py-6 space-y-4">
-                @php
-                    $mobileNavLinks = [
-                        ['href' => route('frames.men'), 'label' => 'Men'],
-                        ['href' => route('frames.women'), 'label' => 'Women'],
-                        ['href' => route('about'), 'label' => 'About Us'],
-                    ];
-                @endphp
-                @foreach ($mobileNavLinks as $link)
-                    @php $isActive = request()->is(ltrim($link['href'], '/')) @endphp
-                    <a href="{{ $link['href'] }}"
+                @foreach ($navLinks as $link)
+                    @php $isActive = request()->routeIs($link['route']) @endphp
+                    <a href="{{ route($link['route']) }}"
                         class="block py-2 text-base font-medium transition-colors {{ $isActive ? 'text-[#1a3c2e] font-semibold' : 'text-gray-600 hover:text-[#1a3c2e]' }}">{{ $link['label'] }}</a>
                 @endforeach
                 <hr class="border-gray-100">
