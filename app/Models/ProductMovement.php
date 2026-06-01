@@ -64,7 +64,7 @@ class ProductMovement extends Model
     }
 
     /**
-     * The product this movement belongs to.
+     * @return BelongsTo<Product, $this>
      */
     public function product(): BelongsTo
     {

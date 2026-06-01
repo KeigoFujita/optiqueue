@@ -106,7 +106,7 @@ class OrderController extends Controller
         $newStatus = $request->validated('status');
 
         // Prevent editing if already in a terminal state
-        if (in_array($oldStatus, ['picked-up', 'cancelled'])) {
+        if (in_array($oldStatus, ['picked-up', 'cancelled'], true)) {
             return response()->json([
                 'success' => false,
                 'message' => 'This order is already '.str_replace('-', ' ', $oldStatus).' and cannot be changed.',

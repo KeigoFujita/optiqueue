@@ -14,7 +14,7 @@ class OrderDetail extends Model
     ];
 
     /**
-     * Get the order that owns the order detail.
+     * @return BelongsTo<Order, $this>
      */
     public function order(): BelongsTo
     {
@@ -22,7 +22,7 @@ class OrderDetail extends Model
     }
 
     /**
-     * Get the product that owns the order detail.
+     * @return BelongsTo<Product, $this>
      */
     public function product(): BelongsTo
     {

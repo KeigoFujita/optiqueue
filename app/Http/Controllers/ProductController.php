@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 
+use Illuminate\View\View;
+
 class ProductController extends Controller
 {
-    public function about()
+    public function about(): View
     {
         return view('about');
     }
@@ -14,7 +16,7 @@ class ProductController extends Controller
     /**
      * Display a listing of all products.
      */
-    public function index()
+    public function index(): View
     {
         $bestSellers = Product::active()->where('badge', 'Bestseller')->get();
 
@@ -25,19 +27,21 @@ class ProductController extends Controller
             SUM(CASE WHEN type = 'accessory'                        THEN 1 ELSE 0 END) as accessories_count
         ")->first();
 
+        $countsArray = $counts !== null ? $counts->toArray() : [];
+
         return view('index', [
             'bestSellers' => $bestSellers,
-            'menCount' => (int) $counts->men_count,
-            'womenCount' => (int) $counts->women_count,
-            'lensCount' => (int) $counts->lens_count,
-            'accessoriesCount' => (int) $counts->accessories_count,
+            'menCount' => (int) ($countsArray['men_count'] ?? 0),
+            'womenCount' => (int) ($countsArray['women_count'] ?? 0),
+            'lensCount' => (int) ($countsArray['lens_count'] ?? 0),
+            'accessoriesCount' => (int) ($countsArray['accessories_count'] ?? 0),
         ]);
     }
 
     /**
      * Display men's frames with optional filter and sort.
      */
-    public function men()
+    public function men(): View
     {
         $query = Product::active()->where('category', 'men');
 
@@ -74,7 +78,7 @@ class ProductController extends Controller
     /**
      * Display women's frames with optional filter and sort.
      */
-    public function women()
+    public function women(): View
     {
         $query = Product::active()->where('category', 'women');
 
@@ -111,7 +115,7 @@ class ProductController extends Controller
     /**
      * Display the specified product.
      */
-    public function show(Product $product)
+    public function show(Product $product): View
     {
         return view('checkout', ['frame' => $product]);
     }

@@ -40,6 +40,9 @@ class Customer extends Model
     /**
      * Check if the given OTP is valid and not expired.
      */
+    /**
+     * @return HasMany<Order, $this>
+     */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
@@ -51,7 +54,7 @@ class Customer extends Model
             return false;
         }
 
-        if (! $this->otp_expires_at) {
+        if ($this->otp_expires_at === null) {
             return false;
         }
 

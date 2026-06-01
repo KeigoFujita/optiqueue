@@ -19,11 +19,18 @@ use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\View\View
     {
         $frameId = $request->query('frame_id');
+        $frameId = is_string($frameId) ? $frameId : null;
 
-        if (! $frameId || ! $frame = Product::active()->where('type', 'frame')->find($frameId)) {
+        if ($frameId === null) {
+            return redirect()->route('home');
+        }
+
+        $frame = Product::active()->where('type', 'frame')->find($frameId);
+
+        if ($frame === null) {
             return redirect()->route('home');
         }
 
@@ -42,19 +49,19 @@ class CheckoutController extends Controller
      *
      * Expects query parameters: frame_id, lens_id, accessory_id
      */
-    public function placeOrder(Request $request)
+    public function placeOrder(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\View\View
     {
         $frameId = $request->query('frame_id');
         $lensId = $request->query('lens_id');
         $accessoryId = $request->query('accessory_id');
 
-        $frame = $frameId ? Product::find($frameId) : null;
-        $lens = $lensId ? Product::find($lensId) : null;
-        $accessory = $accessoryId ? Product::find($accessoryId) : null;
+        $frame = is_string($frameId) ? Product::find($frameId) : null;
+        $lens = is_string($lensId) ? Product::find($lensId) : null;
+        $accessory = is_string($accessoryId) ? Product::find($accessoryId) : null;
 
-        $frameValid = $frame && $frame->type === 'frame';
-        $lensValid = $lens && $lens->type === 'lens';
-        $accessoryValid = $accessory && $accessory->type === 'accessory';
+        $frameValid = $frame !== null && $frame->type === 'frame';
+        $lensValid = $lens !== null && $lens->type === 'lens';
+        $accessoryValid = $accessory !== null && $accessory->type === 'accessory';
 
         if (! $frameValid) {
             return redirect()->route('home');
@@ -68,10 +75,10 @@ class CheckoutController extends Controller
             'frame' => $frame,
             'lens' => $lens,
             'accessory' => $accessory,
-            'framePrice' => (int) $frame->price,
-            'lensPrice' => (int) $lens->price,
-            'accessoryPrice' => (int) $accessory->price,
-            'total' => (int) $frame->price + (int) $lens->price + (int) $accessory->price,
+            'framePrice' => $frame->price,
+            'lensPrice' => $lens->price,
+            'accessoryPrice' => $accessory->price,
+            'total' => $frame->price + $lens->price + $accessory->price,
             'frameId' => $frameId,
             'lensId' => $lensId,
             'accessoryId' => $accessoryId,
@@ -82,7 +89,7 @@ class CheckoutController extends Controller
      * Send OTP to the given email.
      * Creates a new customer or updates existing one with a fresh OTP.
      */
-    public function sendOtp(SendOtpRequest $request)
+    public function sendOtp(SendOtpRequest $request): \Illuminate\Http\JsonResponse
     {
         $email = $request->validated('email');
         $otp = Customer::generateOtp();
@@ -111,12 +118,12 @@ class CheckoutController extends Controller
     /**
      * Resend a new OTP to the customer's email.
      */
-    public function resendOtp(SendOtpRequest $request)
+    public function resendOtp(SendOtpRequest $request): \Illuminate\Http\JsonResponse
     {
         $email = $request->validated('email');
         $customer = Customer::where('email', $email)->first();
 
-        if (! $customer) {
+        if ($customer === null) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email not found. Please verify your email first.',
@@ -147,14 +154,14 @@ class CheckoutController extends Controller
      * Verify the OTP entered by the customer.
      * If valid, update verified_at timestamp.
      */
-    public function verifyOtp(VerifyOtpRequest $request)
+    public function verifyOtp(VerifyOtpRequest $request): \Illuminate\Http\JsonResponse
     {
         $email = $request->validated('email');
         $otp = $request->validated('otp');
 
         $customer = Customer::where('email', $email)->first();
 
-        if (! $customer) {
+        if ($customer === null) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email not found.',
@@ -181,7 +188,7 @@ class CheckoutController extends Controller
         ]);
     }
 
-    public function storeOrder(StoreOrderRequest $request)
+    public function storeOrder(StoreOrderRequest $request): \Illuminate\Http\JsonResponse
     {
         $email = $request->validated('email');
         $name = $request->validated('name');
@@ -198,7 +205,7 @@ class CheckoutController extends Controller
             $customer = Customer::where('email', $email)->firstOrFail();
 
             // Ensure customer is verified
-            if (! $customer->verified_at) {
+            if ($customer->verified_at === null) {
                 DB::rollBack();
 
                 return response()->json([
@@ -212,9 +219,9 @@ class CheckoutController extends Controller
             $customer->save();
 
             // 2. Calculate total amount
-            $framePrice = $frameId ? (int) Product::find($frameId)->price : 0;
-            $lensPrice = $lensId ? (int) Product::find($lensId)->price : 0;
-            $accessoryPrice = $accessoryId ? (int) Product::find($accessoryId)->price : 0;
+            $framePrice = $frameId !== null ? Product::findOrFail((int) $frameId)->price : 0;
+            $lensPrice = $lensId !== null ? Product::findOrFail((int) $lensId)->price : 0;
+            $accessoryPrice = $accessoryId !== null ? Product::findOrFail((int) $accessoryId)->price : 0;
             $totalAmount = $framePrice + $lensPrice + $accessoryPrice;
 
             // 3. Create order
@@ -229,13 +236,13 @@ class CheckoutController extends Controller
             // 4. Create order details for each product
             $products = [];
 
-            if ($frameId) {
+            if ($frameId !== null) {
                 $products[] = ['product_id' => $frameId, 'quantity' => 1];
             }
-            if ($lensId) {
+            if ($lensId !== null) {
                 $products[] = ['product_id' => $lensId, 'quantity' => 1];
             }
-            if ($accessoryId) {
+            if ($accessoryId !== null) {
                 $products[] = ['product_id' => $accessoryId, 'quantity' => 1];
             }
 
@@ -247,7 +254,7 @@ class CheckoutController extends Controller
                 ]);
 
                 // ── Deduct stock and record product movement ──────────
-                $product = Product::findOrFail($item['product_id']);
+                $product = Product::findOrFail((int) $item['product_id']);
 
                 $updated = Product::where('id', $item['product_id'])
                     ->where('stocks', '>=', $item['quantity'])

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
+    /**
+     * @return array{0: Carbon, 1: Carbon}
+     */
     public function resolveDateRange(string $period): array
     {
         $now = Carbon::now();
@@ -22,6 +25,9 @@ class DashboardService
         };
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getStats(string $period): array
     {
         [$startDate, $endDate] = $this->resolveDateRange($period);
@@ -163,8 +169,8 @@ class DashboardService
             ? round((($totalOrders - $prevPeriodOrders) / $prevPeriodOrders) * 100, 1)
             : 100;
 
-        $bestSellerUnits = $bestSeller ? (int) $bestSeller->total_qty : 0;
-        $bestSellerName = $bestSeller?->product?->name ?? 'N/A';
+        $bestSellerUnits = $bestSeller !== null ? (int) $bestSeller->getAttribute('total_qty') : 0;
+        $bestSellerName = $bestSeller?->product->name ?? 'N/A';
 
         return compact(
             'period',

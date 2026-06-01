@@ -20,11 +20,17 @@ class Order extends Model
         'status',
     ];
 
+    /**
+     * @return BelongsTo<Customer, $this>
+     */
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
+    /**
+     * @return HasMany<OrderDetail, $this>
+     */
     public function orderDetails(): HasMany
     {
         return $this->hasMany(OrderDetail::class);
