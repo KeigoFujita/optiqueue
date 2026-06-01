@@ -113,6 +113,6 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return view('checkout', ['product' => $product]);
+        return view('checkout', ['frame' => $product]);
     }
 }

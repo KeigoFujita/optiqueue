@@ -18,7 +18,7 @@
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
-                <span class="text-[#1a3c2e] font-medium">{{ $product ? $product['name'] : 'Customize' }}</span>
+                <span class="text-[#1a3c2e] font-medium">{{ $frame->name }}</span>
             </nav>
             {{-- Title --}}
             <div class="reveal">
@@ -51,18 +51,18 @@
                             {{-- Frame Image --}}
                             <div
                                 class="bg-[#f8faf7] rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center border border-gray-100">
-                                <img src="storage/{{ $product ? $product['image_path'] : 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&q=80&auto=format&fit=crop' }}"
-                                    alt="{{ $product ? $product['name'] : 'Selected Frame' }}"
+                                <img src="storage/{{ $frame ? $frame->image_path : 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&q=80&auto=format&fit=crop' }}"
+                                    alt="{{ $frame ? $frame->name : 'Selected Frame' }}"
                                     class="w-full max-w-[280px] h-auto object-contain p-4">
                             </div>
                             {{-- Frame Details --}}
                             <div class="mt-6 text-center">
-                                @if ($product)
-                                    <h2 class="text-2xl font-bold font-serif text-[#1a3c2e]">{{ $product['name'] }}</h2>
-                                    <p class="text-gray-500 mt-1 text-sm">{{ $product['description'] }}</p>
+                                @if ($frame)
+                                    <h2 class="text-2xl font-bold font-serif text-[#1a3c2e]">{{ $frame->name }}</h2>
+                                    <p class="text-gray-500 mt-1 text-sm">{{ $frame->description }}</p>
                                     <div
                                         class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#1a3c2e]/[0.08] rounded-full">
-                                        <span class="font-bold text-[#1a3c2e]">${{ $product['price'] }}</span>
+                                        <span class="font-bold text-[#1a3c2e]">${{ $frame->price }}</span>
                                         <span class="text-sm text-gray-500">Frame</span>
                                     </div>
                                 @else
@@ -75,7 +75,7 @@
                                 <div class="flex items-center justify-between text-sm">
                                     <span class="text-gray-500">Frame</span>
                                     <span class="font-medium text-[#1a3c2e]" id="selected-frame-display">
-                                        {{ $product ? $product['name'] : '—' }}
+                                        {{ $frame ? $frame->name : '—' }}
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
@@ -152,7 +152,7 @@
                                 <div class="flex items-center justify-between py-1">
                                     <span class="text-gray-500">Frame</span>
                                     <span class="font-medium text-[#1a3c2e]" id="frame-price-display">
-                                        ${{ $product ? $product['price'] : '0' }}
+                                        ${{ $frame ? $frame->price : '0' }}
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between py-1">
@@ -167,7 +167,7 @@
                                     <div class="flex items-center justify-between">
                                         <span class="text-base font-bold text-[#1a3c2e]">Total</span>
                                         <span class="text-2xl font-bold text-[#1a3c2e]" id="total-price-display">
-                                            ${{ $product ? $product['price'] : '0' }}
+                                            ${{ $frame ? $frame->price : '0' }}
                                         </span>
                                     </div>
                                     <div class="flex items-center justify-end gap-1.5 mt-2">
@@ -209,8 +209,8 @@
                 // STATE
                 // ============================================================
                 const state = {
-                    frameId: {{ $product ? $product['id'] : 'null' }},
-                    framePrice: {{ $product ? $product['price'] : 0 }},
+                    frameId: {{ $frame ? $frame->id : 'null' }},
+                    framePrice: {{ $frame ? $frame->price : 0 }},
                     lensId: {{ $lenses->first() ? $lenses->first()->id : 'null' }},
                     lensPrice: {{ $lenses->first() ? $lenses->first()->price : 0 }},
                     lensName: '{{ $lenses->first() ? $lenses->first()->name : 'Standard' }}',

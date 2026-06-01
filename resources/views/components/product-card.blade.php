@@ -71,7 +71,7 @@
                 @endif
                 ${{ $price }}
             </span>
-            <a href="{{ $productId && !$isOutOfStock ? route('checkout', ['product' => $productId]) : ($isOutOfStock ? '#' : route('checkout')) }}"
+            <a href="{{ $productId && !$isOutOfStock ? route('checkout', ['frame_id' => $productId]) : ($isOutOfStock ? '#' : route('checkout')) }}"
                 class="inline-flex items-center px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300
                 {{ $isOutOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'text-[#1a3c2e] bg-[#1a3c2e]/[0.08] hover:bg-[#1a3c2e] hover:text-white' }}">
                 {{ $isOutOfStock ? 'Unavailable' : 'Select Frame' }}

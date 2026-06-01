@@ -15,7 +15,7 @@
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
-                <a href="{{ route('checkout') }}" class="hover:text-[#1a3c2e] transition-colors duration-300">Customize</a>
+                <a href="{{ route('checkout', ['frame_id' => $frame ? $frame->id : null ]) }}" class="hover:text-[#1a3c2e] transition-colors duration-300">Customize</a>
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
@@ -255,7 +255,7 @@
 
                         {{-- Place Order Button --}}
                         <div class="reveal flex flex-col sm:flex-row items-center gap-4">
-                            <a href="{{ route('checkout') }}"
+                            <a href="{{ $frameId ? route('checkout', ['frame_id' => $frameId]) : route('checkout') }}"
                                 class="w-full sm:w-auto text-center py-4 px-10 border-2 border-[#1a3c2e]/20 hover:border-[#1a3c2e] rounded-xl font-medium text-gray-600 hover:text-[#1a3c2e] hover:bg-[#1a3c2e]/[0.02] transition-all duration-300">
                                 ← Back to Customize
                             </a>

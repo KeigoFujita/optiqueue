@@ -10,39 +10,55 @@ use Illuminate\Support\Facades\Mail;
 describe('CheckoutController', function () {
 
     describe('index()', function () {
-        it('accepts a valid product query parameter', function () {
-            $product = Product::factory()->frame()->create(['price' => 1500]);
+        it('accepts a valid frame_id query parameter', function () {
+            $frame = Product::factory()->frame()->create(['price' => 1500]);
             Product::factory(2)->lens()->create();
             Product::factory(2)->accessory()->create();
 
-            $response = $this->get(route('checkout', ['product' => $product->id]));
+            $response = $this->get(route('checkout', ['frame_id' => $frame->id]));
 
             $response->assertOk();
-            expect($response->viewData('product')->id)->toBe($product->id);
+            expect($response->viewData('frame')->id)->toBe($frame->id);
         });
 
-        it('redirects to home when no product parameter is provided', function () {
+        it('redirects to home when no frame_id parameter is provided', function () {
             $response = $this->get(route('checkout'));
 
             $response->assertRedirect(route('home'));
         });
 
-        it('redirects to home when product parameter is missing', function () {
-            $response = $this->get(route('checkout', ['product' => '']));
+        it('redirects to home when frame_id parameter is empty', function () {
+            $response = $this->get(route('checkout', ['frame_id' => '']));
 
             $response->assertRedirect(route('home'));
         });
 
-        it('redirects to home for an inactive product', function () {
-            $product = Product::factory()->inactive()->create();
+        it('redirects to home for an inactive frame', function () {
+            $frame = Product::factory()->inactive()->create();
 
-            $response = $this->get(route('checkout', ['product' => $product->id]));
+            $response = $this->get(route('checkout', ['frame_id' => $frame->id]));
 
             $response->assertRedirect(route('home'));
         });
 
-        it('redirects to home for a non-existent product', function () {
-            $response = $this->get(route('checkout', ['product' => 99999]));
+        it('redirects to home for a non-existent frame', function () {
+            $response = $this->get(route('checkout', ['frame_id' => 99999]));
+
+            $response->assertRedirect(route('home'));
+        });
+
+        it('redirects to home for a non-frame product (lens)', function () {
+            $lens = Product::factory()->lens()->create();
+
+            $response = $this->get(route('checkout', ['frame_id' => $lens->id]));
+
+            $response->assertRedirect(route('home'));
+        });
+
+        it('redirects to home for a non-frame product (accessory)', function () {
+            $accessory = Product::factory()->accessory()->create();
+
+            $response = $this->get(route('checkout', ['frame_id' => $accessory->id]));
 
             $response->assertRedirect(route('home'));
         });
@@ -115,7 +131,7 @@ describe('CheckoutController', function () {
 
             $response = $this->get(route('order.place', ['frame_id' => $frame->id]));
 
-            $response->assertRedirect(route('checkout', ['product' => $frame->id]));
+            $response->assertRedirect(route('checkout', ['frame_id' => $frame->id]));
         });
 
         it('redirects to checkout when frame is valid but lens does not exist', function () {
@@ -126,7 +142,7 @@ describe('CheckoutController', function () {
                 'lens_id' => 99999,
             ]));
 
-            $response->assertRedirect(route('checkout', ['product' => $frame->id]));
+            $response->assertRedirect(route('checkout', ['frame_id' => $frame->id]));
         });
 
         it('redirects to checkout when frame is valid but lens type is wrong', function () {
@@ -138,7 +154,7 @@ describe('CheckoutController', function () {
                 'lens_id' => $frameAsLens->id,
             ]));
 
-            $response->assertRedirect(route('checkout', ['product' => $frame->id]));
+            $response->assertRedirect(route('checkout', ['frame_id' => $frame->id]));
         });
 
         it('redirects to checkout when frame is valid but accessory type is wrong', function () {
@@ -150,7 +166,7 @@ describe('CheckoutController', function () {
                 'accessory_id' => $lensAsAccessory->id,
             ]));
 
-            $response->assertRedirect(route('checkout', ['product' => $frame->id]));
+            $response->assertRedirect(route('checkout', ['frame_id' => $frame->id]));
         });
     });
 

@@ -21,9 +21,9 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        $productId = $request->query('product');
+        $frameId = $request->query('frame_id');
 
-        if (! $productId || ! $product = Product::active()->find($productId)) {
+        if (! $frameId || ! $frame = Product::active()->where('type', 'frame')->find($frameId)) {
             return redirect()->route('home');
         }
 
@@ -31,7 +31,7 @@ class CheckoutController extends Controller
         $accessories = Product::active()->where('type', 'accessory')->get();
 
         return view('checkout', [
-            'product' => $product,
+            'frame' => $frame,
             'lenses' => $lenses,
             'accessories' => $accessories,
         ]);
@@ -61,7 +61,7 @@ class CheckoutController extends Controller
         }
 
         if (! $lensValid || ! $accessoryValid) {
-            return redirect()->route('checkout', ['product' => $frameId]);
+            return redirect()->route('checkout', ['frame_id' => $frameId]);
         }
 
         return view('place-order', [
