@@ -62,6 +62,7 @@ class DashboardService
 
         $chartLabels = [];
         $chartData = [];
+
         for ($i = 11; $i >= 0; $i--) {
             $month = Carbon::now()->subMonths($i)->format('Y-m');
             $chartLabels[] = Carbon::now()->subMonths($i)->format('M');
@@ -90,6 +91,7 @@ class DashboardService
             $sumY = array_sum($y);
             $sumXY = 0;
             $sumX2 = 0;
+
             for ($i = 0; $i < $n; $i++) {
                 $sumXY += $x[$i] * $y[$i];
                 $sumX2 += $x[$i] * $x[$i];
@@ -123,6 +125,7 @@ class DashboardService
 
         $weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         $weekOrderData = [];
+
         for ($i = 0; $i < 7; $i++) {
             $date = $weekStart->copy()->addDays($i)->format('Y-m-d');
             $weekOrderData[] = (int) ($dailyOrders[$date] ?? 0);

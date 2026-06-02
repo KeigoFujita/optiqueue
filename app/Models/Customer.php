@@ -48,7 +48,7 @@ class Customer extends Model
             return false;
         }
 
-        if (! $this->otp_expires_at) {
+        if (!$this->otp_expires_at) {
             return false;
         }
 

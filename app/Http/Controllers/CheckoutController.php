@@ -26,18 +26,18 @@ use RuntimeException;
 
 class CheckoutController extends Controller
 {
-    public function index(Request $request): RedirectResponse|View
+    public function index(Request $request): RedirectResponse | View
     {
         $frameId = $request->query('frame_id');
         $frameId = is_string($frameId) ? $frameId : null;
 
-        if (! $frameId) {
+        if (!$frameId) {
             return redirect()->route('home');
         }
 
         $frame = Product::active()->where('type', 'frame')->find($frameId);
 
-        if (! $frame) {
+        if (!$frame) {
             return redirect()->route('home');
         }
 
@@ -56,7 +56,7 @@ class CheckoutController extends Controller
      *
      * Expects query parameters: frame_id, lens_id, accessory_id
      */
-    public function placeOrder(Request $request): RedirectResponse|View
+    public function placeOrder(Request $request): RedirectResponse | View
     {
         $frameId = $request->query('frame_id');
         $lensId = $request->query('lens_id');
@@ -70,11 +70,11 @@ class CheckoutController extends Controller
         $lensValid = $lens && $lens->type === 'lens';
         $accessoryValid = $accessory && $accessory->type === 'accessory';
 
-        if (! $frameValid) {
+        if (!$frameValid) {
             return redirect()->route('home');
         }
 
-        if (! $lensValid || ! $accessoryValid) {
+        if (!$lensValid || !$accessoryValid) {
             return redirect()->route('checkout', ['frame_id' => $frameId]);
         }
 
@@ -111,7 +111,7 @@ class CheckoutController extends Controller
         try {
             Mail::to($email)->send(new OtpMail($otp, $customer->name ?? 'Valued Customer'));
         } catch (Exception $e) {
-            Log::error('Failed to send OTP email: '.$e->getMessage());
+            Log::error('Failed to send OTP email: ' . $e->getMessage());
         }
 
         Log::info("OTP for {$email}: {$otp}");
@@ -130,7 +130,7 @@ class CheckoutController extends Controller
         $email = $request->validated('email');
         $customer = Customer::where('email', $email)->first();
 
-        if (! $customer) {
+        if (!$customer) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email not found. Please verify your email first.',
@@ -146,7 +146,7 @@ class CheckoutController extends Controller
         try {
             Mail::to($email)->send(new OtpMail($otp, $customer->name ?? 'Valued Customer'));
         } catch (Exception $e) {
-            Log::error('Failed to resend OTP email: '.$e->getMessage());
+            Log::error('Failed to resend OTP email: ' . $e->getMessage());
         }
 
         Log::info("OTP resent for {$email}: {$otp}");
@@ -168,14 +168,14 @@ class CheckoutController extends Controller
 
         $customer = Customer::where('email', $email)->first();
 
-        if (! $customer) {
+        if (!$customer) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email not found.',
             ], 404);
         }
 
-        if (! $customer->isValidOtp($otp)) {
+        if (!$customer->isValidOtp($otp)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid OTP. Please try again.',
@@ -212,7 +212,7 @@ class CheckoutController extends Controller
             $customer = Customer::where('email', $email)->firstOrFail();
 
             // Ensure customer is verified
-            if (! $customer->verified_at) {
+            if (!$customer->verified_at) {
                 DB::rollBack();
 
                 return response()->json([
@@ -232,7 +232,7 @@ class CheckoutController extends Controller
             $totalAmount = $framePrice + $lensPrice + $accessoryPrice;
 
             // 3. Create order
-            $orderNo = 'ORD-'.mb_strtoupper(uniqid());
+            $orderNo = 'ORD-' . mb_strtoupper(uniqid());
             $order = Order::create([
                 'order_no' => $orderNo,
                 'customer_id' => $customer->id,
@@ -246,9 +246,11 @@ class CheckoutController extends Controller
             if ($frameId) {
                 $products[] = ['product_id' => $frameId, 'quantity' => 1];
             }
+
             if ($lensId) {
                 $products[] = ['product_id' => $lensId, 'quantity' => 1];
             }
+
             if ($accessoryId) {
                 $products[] = ['product_id' => $accessoryId, 'quantity' => 1];
             }
@@ -290,7 +292,7 @@ class CheckoutController extends Controller
                 $order->load('customer', 'orderDetails.product');
                 Mail::to($order->customer?->email)->send(new OrderConfirmationMail($order));
             } catch (Exception $e) {
-                Log::error('Failed to send order confirmation email: '.$e->getMessage());
+                Log::error('Failed to send order confirmation email: ' . $e->getMessage());
             }
 
             return response()->json([
@@ -301,7 +303,7 @@ class CheckoutController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
 
-            Log::error('Order placement failed: '.$e->getMessage());
+            Log::error('Order placement failed: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,

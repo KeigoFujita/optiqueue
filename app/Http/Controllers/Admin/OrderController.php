@@ -112,7 +112,7 @@ class OrderController extends Controller
         if (in_array($oldStatus, ['picked-up', 'cancelled'], true)) {
             return response()->json([
                 'success' => false,
-                'message' => 'This order is already '.str_replace('-', ' ', $oldStatus).' and cannot be changed.',
+                'message' => 'This order is already ' . str_replace('-', ' ', $oldStatus) . ' and cannot be changed.',
             ], 422);
         }
 
@@ -124,12 +124,12 @@ class OrderController extends Controller
             $order->load('orderDetails.product');
             Mail::to($order->customer?->email)->send(new OrderStatusMail($order, $oldStatus));
         } catch (Exception $e) {
-            Log::error('Failed to send status update email: '.$e->getMessage());
+            Log::error('Failed to send status update email: ' . $e->getMessage());
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'Order status updated to '.str_replace('-', ' ', ucwords($newStatus, '-')).'.',
+            'message' => 'Order status updated to ' . str_replace('-', ' ', ucwords($newStatus, '-')) . '.',
             'order' => [
                 'id' => $order->id,
                 'status' => $order->status,

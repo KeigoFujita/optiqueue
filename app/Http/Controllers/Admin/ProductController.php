@@ -25,6 +25,7 @@ class ProductController extends Controller
 
         // ── Category / Status filter ────────────────────────────
         $filter = $request->query('filter', 'all');
+
         if ($filter === 'archived') {
             // Show only archived products
             $query->where('status', 'archived');
@@ -39,8 +40,9 @@ class ProductController extends Controller
 
         // ── Search ─────────────────────────────────────────────
         $search = $request->query('search');
+
         if ($search) {
-            $searchTerm = '%'.$search.'%';
+            $searchTerm = '%' . $search . '%';
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'like', $searchTerm)
                     ->orWhere('description', 'like', $searchTerm);
@@ -70,16 +72,17 @@ class ProductController extends Controller
         $category = $request->validated('category');
 
         if ($type === 'frame') {
-            $subDir = 'frames/'.$category; // frames/men or frames/women
+            $subDir = 'frames/' . $category; // frames/men or frames/women
         } else {
-            $subDir = $type.'s'; // lenses or accessories
+            $subDir = $type . 's'; // lenses or accessories
         }
 
         // ── Handle image upload ─────────────────────────────────
         $imagePath = '';
+
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
-            $filename = Str::slug($request->validated('name')).'.'.$extension;
+            $filename = Str::slug($request->validated('name')) . '.' . $extension;
             $imagePath = $request->file('image')->storeAs($subDir, $filename, 'public');
         }
 
@@ -126,9 +129,9 @@ class ProductController extends Controller
         $category = $request->validated('category');
 
         if ($type === 'frame') {
-            $subDir = 'frames/'.$category;
+            $subDir = 'frames/' . $category;
         } else {
-            $subDir = $type.'s';
+            $subDir = $type . 's';
         }
 
         // ── Handle image upload ─────────────────────────────────
@@ -139,7 +142,7 @@ class ProductController extends Controller
             }
 
             $extension = $request->file('image')->extension();
-            $filename = Str::slug($request->validated('name')).'.'.$extension;
+            $filename = Str::slug($request->validated('name')) . '.' . $extension;
             $imagePath = $request->file('image')->storeAs($subDir, $filename, 'public');
         } else {
             $imagePath = $product->image_path;

@@ -48,6 +48,7 @@ class ProductController extends Controller
 
         // ── Filter ──────────────────────────────────────────────
         $filter = request()->query('filter', 'all');
+
         if ($filter !== 'all') {
             if ($filter === 'Sale') {
                 $query->where(function ($q) {
@@ -61,6 +62,7 @@ class ProductController extends Controller
 
         // ── Sort ────────────────────────────────────────────────
         $sort = request()->query('sort', 'low');
+
         if ($sort === 'high') {
             $query->orderBy('price', 'desc');
         } else {
@@ -85,6 +87,7 @@ class ProductController extends Controller
 
         // ── Filter ──────────────────────────────────────────────
         $filter = request()->query('filter', 'all');
+
         if ($filter !== 'all') {
             if ($filter === 'Sale') {
                 $query->where(function ($q) {
@@ -98,6 +101,7 @@ class ProductController extends Controller
 
         // ── Sort ────────────────────────────────────────────────
         $sort = request()->query('sort', 'low');
+
         if ($sort === 'high') {
             $query->orderBy('price', 'desc');
         } else {

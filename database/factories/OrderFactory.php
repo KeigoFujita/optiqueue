@@ -15,7 +15,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'order_no' => 'ORD-'.mb_strtoupper(uniqid()),
+            'order_no' => 'ORD-' . mb_strtoupper(uniqid()),
             'customer_id' => Customer::factory(),
             'total_amount' => fake()->numberBetween(500, 5000),
             'status' => fake()->randomElement(['pending', 'processing', 'ready', 'picked-up']),
