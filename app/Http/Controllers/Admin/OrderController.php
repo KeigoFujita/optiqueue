@@ -85,10 +85,10 @@ class OrderController extends Controller
                 'order_no' => $order->order_no,
                 'status' => $order->status,
                 'total_amount' => number_format($order->total_amount, 2),
-                'created_at' => $order->created_at->format('M d, Y h:i A'),
+                'created_at' => $order->created_at?->format('M d, Y h:i A'),
                 'customer' => [
                     'name' => $order->customer->name ?? '—',
-                    'email' => $order->customer->email,
+                    'email' => $order->customer?->email,
                     'phone_number' => $order->customer->phone_number ?? '—',
                 ],
                 'items_html' => $itemsHtml,
@@ -119,7 +119,7 @@ class OrderController extends Controller
         // ── Send email notification ───────────────────────────────────
         try {
             $order->load('orderDetails.product');
-            Mail::to($order->customer->email)->send(new OrderStatusMail($order, $oldStatus));
+            Mail::to($order->customer?->email)->send(new OrderStatusMail($order, $oldStatus));
         } catch (\Exception $e) {
             Log::error('Failed to send status update email: '.$e->getMessage());
         }

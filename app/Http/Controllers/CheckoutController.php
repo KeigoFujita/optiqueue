@@ -12,25 +12,28 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductMovement;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\View\View;
 
 class CheckoutController extends Controller
 {
-    public function index(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+    public function index(Request $request): RedirectResponse|View
     {
         $frameId = $request->query('frame_id');
         $frameId = is_string($frameId) ? $frameId : null;
 
-        if ($frameId === null) {
+        if (! $frameId) {
             return redirect()->route('home');
         }
 
         $frame = Product::active()->where('type', 'frame')->find($frameId);
 
-        if ($frame === null) {
+        if (! $frame) {
             return redirect()->route('home');
         }
 
@@ -49,7 +52,7 @@ class CheckoutController extends Controller
      *
      * Expects query parameters: frame_id, lens_id, accessory_id
      */
-    public function placeOrder(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+    public function placeOrder(Request $request): RedirectResponse|View
     {
         $frameId = $request->query('frame_id');
         $lensId = $request->query('lens_id');
@@ -59,9 +62,9 @@ class CheckoutController extends Controller
         $lens = is_string($lensId) ? Product::find($lensId) : null;
         $accessory = is_string($accessoryId) ? Product::find($accessoryId) : null;
 
-        $frameValid = $frame !== null && $frame->type === 'frame';
-        $lensValid = $lens !== null && $lens->type === 'lens';
-        $accessoryValid = $accessory !== null && $accessory->type === 'accessory';
+        $frameValid = $frame && $frame->type === 'frame';
+        $lensValid = $lens && $lens->type === 'lens';
+        $accessoryValid = $accessory && $accessory->type === 'accessory';
 
         if (! $frameValid) {
             return redirect()->route('home');
@@ -89,7 +92,7 @@ class CheckoutController extends Controller
      * Send OTP to the given email.
      * Creates a new customer or updates existing one with a fresh OTP.
      */
-    public function sendOtp(SendOtpRequest $request): \Illuminate\Http\JsonResponse
+    public function sendOtp(SendOtpRequest $request): JsonResponse
     {
         $email = $request->validated('email');
         $otp = Customer::generateOtp();
@@ -118,12 +121,12 @@ class CheckoutController extends Controller
     /**
      * Resend a new OTP to the customer's email.
      */
-    public function resendOtp(SendOtpRequest $request): \Illuminate\Http\JsonResponse
+    public function resendOtp(SendOtpRequest $request): JsonResponse
     {
         $email = $request->validated('email');
         $customer = Customer::where('email', $email)->first();
 
-        if ($customer === null) {
+        if (! $customer) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email not found. Please verify your email first.',
@@ -154,14 +157,14 @@ class CheckoutController extends Controller
      * Verify the OTP entered by the customer.
      * If valid, update verified_at timestamp.
      */
-    public function verifyOtp(VerifyOtpRequest $request): \Illuminate\Http\JsonResponse
+    public function verifyOtp(VerifyOtpRequest $request): JsonResponse
     {
         $email = $request->validated('email');
         $otp = $request->validated('otp');
 
         $customer = Customer::where('email', $email)->first();
 
-        if ($customer === null) {
+        if (! $customer) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email not found.',
@@ -188,7 +191,7 @@ class CheckoutController extends Controller
         ]);
     }
 
-    public function storeOrder(StoreOrderRequest $request): \Illuminate\Http\JsonResponse
+    public function storeOrder(StoreOrderRequest $request): JsonResponse
     {
         $email = $request->validated('email');
         $name = $request->validated('name');
@@ -205,7 +208,7 @@ class CheckoutController extends Controller
             $customer = Customer::where('email', $email)->firstOrFail();
 
             // Ensure customer is verified
-            if ($customer->verified_at === null) {
+            if (! $customer->verified_at) {
                 DB::rollBack();
 
                 return response()->json([
@@ -219,9 +222,9 @@ class CheckoutController extends Controller
             $customer->save();
 
             // 2. Calculate total amount
-            $framePrice = $frameId !== null ? Product::findOrFail((int) $frameId)->price : 0;
-            $lensPrice = $lensId !== null ? Product::findOrFail((int) $lensId)->price : 0;
-            $accessoryPrice = $accessoryId !== null ? Product::findOrFail((int) $accessoryId)->price : 0;
+            $framePrice = $frameId ? Product::findOrFail((int) $frameId)->price : 0;
+            $lensPrice = $lensId ? Product::findOrFail((int) $lensId)->price : 0;
+            $accessoryPrice = $accessoryId ? Product::findOrFail((int) $accessoryId)->price : 0;
             $totalAmount = $framePrice + $lensPrice + $accessoryPrice;
 
             // 3. Create order
@@ -236,13 +239,13 @@ class CheckoutController extends Controller
             // 4. Create order details for each product
             $products = [];
 
-            if ($frameId !== null) {
+            if ($frameId) {
                 $products[] = ['product_id' => $frameId, 'quantity' => 1];
             }
-            if ($lensId !== null) {
+            if ($lensId) {
                 $products[] = ['product_id' => $lensId, 'quantity' => 1];
             }
-            if ($accessoryId !== null) {
+            if ($accessoryId) {
                 $products[] = ['product_id' => $accessoryId, 'quantity' => 1];
             }
 
@@ -281,7 +284,7 @@ class CheckoutController extends Controller
             // Send order confirmation email
             try {
                 $order->load('customer', 'orderDetails.product');
-                Mail::to($order->customer->email)->send(new OrderConfirmationMail($order));
+                Mail::to($order->customer?->email)->send(new OrderConfirmationMail($order));
             } catch (\Exception $e) {
                 Log::error('Failed to send order confirmation email: '.$e->getMessage());
             }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -27,7 +26,7 @@ class ProductController extends Controller
             SUM(CASE WHEN type = 'accessory'                        THEN 1 ELSE 0 END) as accessories_count
         ")->first();
 
-        $countsArray = $counts !== null ? $counts->toArray() : [];
+        $countsArray = $counts?->toArray() ?? [];
 
         return view('index', [
             'bestSellers' => $bestSellers,

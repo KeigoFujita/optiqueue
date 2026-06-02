@@ -37,7 +37,7 @@ class ProductController extends Controller
 
         // ── Search ─────────────────────────────────────────────
         $search = $request->query('search');
-        if ($search !== null && $search !== '') {
+        if ($search) {
             $searchTerm = '%'.$search.'%';
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'like', $searchTerm)
@@ -132,7 +132,7 @@ class ProductController extends Controller
         // ── Handle image upload ─────────────────────────────────
         if ($request->hasFile('image')) {
             // Delete old image if exists
-            if ($product->image_path !== '') {
+            if ($product->image_path) {
                 Storage::disk('public')->delete($product->image_path);
             }
 
@@ -202,7 +202,7 @@ class ProductController extends Controller
             'success' => true,
             'message' => 'Movement recorded successfully!',
             'movement' => $movement,
-            'stock' => $product->fresh()->stocks,
+            'stock' => $product->fresh()?->stocks,
         ]);
     }
 }

@@ -169,7 +169,7 @@ class DashboardService
             ? round((($totalOrders - $prevPeriodOrders) / $prevPeriodOrders) * 100, 1)
             : 100;
 
-        $bestSellerUnits = $bestSeller !== null ? (int) $bestSeller->getAttribute('total_qty') : 0;
+        $bestSellerUnits = $bestSeller ? (int) $bestSeller->getAttribute('total_qty') : 0;
         $bestSellerName = $bestSeller?->product->name ?? 'N/A';
 
         return compact(
