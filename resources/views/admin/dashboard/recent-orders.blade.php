@@ -27,7 +27,7 @@
                 </div>
                 <div class="flex items-center gap-4 shrink-0">
                     <span class="text-sm font-semibold text-gray-800">
-                        ${{ number_format($order->total_amount, 2) }}
+                        ₱{{ number_format($order->total_amount, 2) }}
                     </span>
                     @php
                         $statusBadge = match ($order->status) {

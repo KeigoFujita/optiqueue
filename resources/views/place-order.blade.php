@@ -67,7 +67,7 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-sm text-gray-500" id="summary-frame-price">${{ $framePrice }}</p>
+                                        <p class="text-sm text-gray-500" id="summary-frame-price">₱{{ $framePrice }}</p>
                                     </div>
                                 </div>
 
@@ -83,7 +83,7 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-sm text-gray-500" id="summary-lens-price">${{ $lensPrice }}</p>
+                                        <p class="text-sm text-gray-500" id="summary-lens-price">₱{{ $lensPrice }}</p>
                                     </div>
                                 </div>
 
@@ -100,7 +100,7 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-sm text-gray-500" id="summary-accessory-price">${{ $accessoryPrice }}
+                                        <p class="text-sm text-gray-500" id="summary-accessory-price">₱{{ $accessoryPrice }}
                                         </p>
                                     </div>
                                 </div>
@@ -110,7 +110,7 @@
                                     <div class="flex items-center justify-between px-4">
                                         <span class="text-lg font-bold text-[#1a3c2e]">Total</span>
                                         <span class="text-2xl font-bold text-[#1a3c2e]"
-                                            id="summary-total">${{ $total }}</span>
+                                            id="summary-total">₱{{ $total }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -237,7 +237,7 @@
                                     <h3 class="text-2xl font-bold text-gray-900 mb-3">Confirm Order</h3>
                                     <p class="text-gray-600 leading-relaxed mb-6">
                                         Are you sure you want to place this order?<br>
-                                        <span class="font-semibold text-[#1a3c2e]">Total: ${{ $total }}</span>
+                                        <span class="font-semibold text-[#1a3c2e]">Total: ₱{{ $total }}</span>
                                     </p>
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         <button onclick="closeConfirmModal()"
@@ -682,7 +682,7 @@
                             placeOrderBtn.disabled = false;
                             placeOrderBtn.className =
                                 'w-full sm:flex-1 py-4 px-10 bg-[#1a3c2e] hover:bg-[#2a5c3e] text-white rounded-xl font-semibold transition-all duration-300 shadow-sm hover:shadow-md';
-                            placeOrderBtn.textContent = 'Place Order — ${{ $total }}';
+                            placeOrderBtn.textContent = 'Place Order — ₱{{ $total }}';
 
                             // Disable OTP inputs
                             otpInputs.forEach(function(inp) {

@@ -52,7 +52,7 @@
 
     {{-- Price --}}
     @if ($price > 0)
-        <p class="text-xs font-medium text-[#1a3c2e] mt-1">+${{ $price }}</p>
+        <p class="text-xs font-medium text-[#1a3c2e] mt-1">+₱{{ $price }}</p>
     @else
         <p class="text-xs font-medium text-gray-400 mt-1">Free</p>
     @endif

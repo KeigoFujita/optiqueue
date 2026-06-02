@@ -16,7 +16,7 @@
                 <p class="text-[10px] text-gray-400 uppercase tracking-wider">Frame</p>
             </div>
         </div>
-        <p class="text-sm font-semibold text-gray-900">${{ number_format($frame->product->price, 2) }}</p>
+        <p class="text-sm font-semibold text-gray-900">₱{{ number_format($frame->product->price, 2) }}</p>
     </div>
 @endif
 
@@ -32,7 +32,7 @@
                 <p class="text-[10px] text-gray-400 uppercase tracking-wider">Lens</p>
             </div>
         </div>
-        <p class="text-sm font-semibold text-gray-900">${{ number_format($lens->product->price, 2) }}</p>
+        <p class="text-sm font-semibold text-gray-900">₱{{ number_format($lens->product->price, 2) }}</p>
     </div>
 @endif
 
@@ -48,7 +48,7 @@
                 <p class="text-[10px] text-gray-400 uppercase tracking-wider">Accessory</p>
             </div>
         </div>
-        <p class="text-sm font-semibold text-gray-900">${{ number_format($acc->product->price, 2) }}</p>
+        <p class="text-sm font-semibold text-gray-900">₱{{ number_format($acc->product->price, 2) }}</p>
     </div>
 @endforeach
 

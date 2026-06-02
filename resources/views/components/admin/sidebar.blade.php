@@ -143,7 +143,7 @@
                 <span class="text-xs text-white/40">Today's Revenue</span>
                 <span class="text-xs font-semibold text-[#f4d03f]">{{ $revenueChangePrefix }}{{ $revenueChangePct }}%</span>
             </div>
-            <p class="text-lg font-bold text-white">${{ number_format($todayRevenue, 0) }}</p>
+            <p class="text-lg font-bold text-white">₱{{ number_format($todayRevenue, 0) }}</p>
             <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
                 <div class="h-full bg-gradient-to-r from-[#f4d03f] to-[#e8b923] rounded-full transition-all duration-500"
                     style="width: {{ $revenueProgress }}%">

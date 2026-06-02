@@ -31,7 +31,7 @@
                 {{ $revenueChange > 0 ? '+' : '' }}{{ $revenueChange }}%
             </span>
         </div>
-        <div class="text-2xl font-bold text-gray-900 mb-0.5" id="stat-total-revenue">${{ number_format($totalRevenue, 2) }}</div>
+        <div class="text-2xl font-bold text-gray-900 mb-0.5" id="stat-total-revenue">₱{{ number_format($totalRevenue, 2) }}</div>
         <div class="text-xs text-gray-500">Total Revenue</div>
         <div class="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div class="h-full w-3/5 bg-emerald-500 rounded-full"></div>
@@ -66,11 +66,11 @@
             </div>
             <span class="badge badge-neutral text-[10px] px-2 py-0.5">MTD</span>
         </div>
-        <div class="text-2xl font-bold text-gray-900 mb-0.5" id="stat-monthly-target">${{ number_format($monthlyTarget, 0) }}</div>
+        <div class="text-2xl font-bold text-gray-900 mb-0.5" id="stat-monthly-target">₱{{ number_format($monthlyTarget, 0) }}</div>
         <div class="text-xs text-gray-500">Monthly Sales Target</div>
         <div class="mt-3 flex items-center justify-between text-xs">
-            <span class="text-gray-400" id="stat-target-label">{{ $salesProgressPercent }}% of ${{ number_format($monthlyTarget, 0) }} goal</span>
-            <span class="font-semibold text-gray-700" id="stat-current-mtd">${{ number_format($currentMonthRevenue, 0) }}</span>
+            <span class="text-gray-400" id="stat-target-label">{{ $salesProgressPercent }}% of ₱{{ number_format($monthlyTarget, 0) }} goal</span>
+            <span class="font-semibold text-gray-700" id="stat-current-mtd">₱{{ number_format($currentMonthRevenue, 0) }}</span>
         </div>
         <div class="mt-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div class="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"

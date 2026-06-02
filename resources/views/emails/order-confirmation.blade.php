@@ -222,12 +222,12 @@
                             <tr>
                                 <td>{{ $detail->product ? $detail->product->name : 'Product #'.$detail->product_id }}</td>
                                 <td>{{ $detail->quantity }}</td>
-                                <td>${{ number_format($itemPrice, 2) }}</td>
+                                <td>₱{{ number_format($itemPrice, 2) }}</td>
                             </tr>
                         @endforeach
                         <tr class="total-row">
                             <td colspan="2">Total</td>
-                            <td>${{ number_format($order->total_amount, 2) }}</td>
+                            <td>₱{{ number_format($order->total_amount, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -82,7 +82,7 @@
                                 <div class="grid grid-cols-2 gap-3">
                                     <div class="p-3 rounded-xl bg-gray-50">
                                         <p class="text-[10px] text-gray-500">Price</p>
-                                        <p class="text-base font-bold text-gray-900">${{ number_format($product->price, 2) }}</p>
+                                        <p class="text-base font-bold text-gray-900">₱{{ number_format($product->price, 2) }}</p>
                                     </div>
                                     <div class="p-3 rounded-xl bg-gray-50">
                                         <p class="text-[10px] text-gray-500">Stock</p>

@@ -159,7 +159,7 @@
                                 </td>
                                 <td class="text-gray-500">{{ $order->customer->email }}</td>
                                 <td class="font-mono text-sm text-gray-700">{{ $order->order_no }}</td>
-                                <td class="font-semibold text-gray-900">${{ number_format($order->total_amount, 2) }}</td>
+                                <td class="font-semibold text-gray-900">₱{{ number_format($order->total_amount, 2) }}</td>
                                 <td>
                                     <span class="status-badge badge {{ $badgeClass }}">
                                         <span class="w-1.5 h-1.5 rounded-full {{ $dotClass }}"></span>
@@ -438,7 +438,7 @@
                 document.getElementById('modalCustomerEmail').textContent = order.customer.email;
                 document.getElementById('modalCustomerPhone').textContent = order.customer.phone_number;
                 document.getElementById('modalDate').textContent = order.created_at;
-                document.getElementById('modalTotalAmount').textContent = '$' + order.total_amount;
+                document.getElementById('modalTotalAmount').textContent = '₱' + order.total_amount;
 
                 // Items
                 document.getElementById('modalItemsContainer').innerHTML = order.items_html;

@@ -157,6 +157,8 @@
         </div>
     </footer>
 
+    @include('components.faq-chat-widget')
+
 </body>
 
 </html>

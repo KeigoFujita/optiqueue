@@ -61,9 +61,9 @@
         <!-- Price Badge -->
         <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm shadow-sm text-gray-900 font-bold text-xs px-3 py-1 rounded-full">
             @if ($product->old_price)
-                <span class="line-through text-gray-400 mr-1">${{ $product->old_price }}</span>
+                <span class="line-through text-gray-400 mr-1">₱{{ $product->old_price }}</span>
             @endif
-            ${{ $product->price }}
+            ₱{{ $product->price }}
         </span>
 
         {{-- Out of stock overlay --}}

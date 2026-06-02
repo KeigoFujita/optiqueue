@@ -34,7 +34,7 @@
                 $prevMonth = count($chartData) > 1 ? $chartData[count($chartData) - 2] : 0;
                 $diff = $lastMonth - $prevMonth;
             @endphp
-            {{ $diff >= 0 ? '+' : '' }}${{ number_format($diff, 0) }} vs last month
+            {{ $diff >= 0 ? '+' : '' }}₱{{ number_format($diff, 0) }} vs last month
         </span>
     </div>
 </div>
@@ -101,7 +101,7 @@
                             cornerRadius: 8,
                             callbacks: {
                                 label: function(context) {
-                                    return '$' + context.parsed.y.toLocaleString();
+                                    return '₱' + context.parsed.y.toLocaleString();
                                 }
                             }
                         }
@@ -131,7 +131,7 @@
                                     family: 'Inter',
                                 },
                                 callback: function(value) {
-                                    return '$' + value.toLocaleString();
+                                    return '₱' + value.toLocaleString();
                                 }
                             },
                             beginAtZero: true,

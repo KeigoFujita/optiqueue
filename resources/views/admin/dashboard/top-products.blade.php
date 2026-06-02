@@ -24,7 +24,7 @@
                         <p class="text-sm font-medium text-gray-900 truncate">{{ $product->product?->name ?? 'Unknown' }}</p>
                         <span class="badge badge-neutral text-[9px] px-1.5 py-0">{{ ucfirst($product->product?->type ?? '') }}</span>
                     </div>
-                    <span class="text-sm font-semibold text-gray-800 shrink-0">${{ number_format($revenue, 2) }}</span>
+                    <span class="text-sm font-semibold text-gray-800 shrink-0">₱{{ number_format($revenue, 2) }}</span>
                 </div>
                 <div class="flex items-center gap-3 ml-6">
                     <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">

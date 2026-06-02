@@ -67,9 +67,9 @@
         <div class="flex items-center justify-between mt-3">
             <span class="text-lg font-bold text-gray-900">
                 @if ($oldPrice)
-                    <span class="text-gray-400 line-through text-sm mr-1">${{ $oldPrice }}</span>
+                    <span class="text-gray-400 line-through text-sm mr-1">₱{{ $oldPrice }}</span>
                 @endif
-                ${{ $price }}
+                ₱{{ $price }}
             </span>
             <a href="{{ $productId && !$isOutOfStock ? route('checkout', ['frame_id' => $productId]) : ($isOutOfStock ? '#' : route('checkout')) }}"
                 class="inline-flex items-center px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300

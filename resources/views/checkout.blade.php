@@ -62,7 +62,7 @@
                                     <p class="text-gray-500 mt-1 text-sm">{{ $frame->description }}</p>
                                     <div
                                         class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#1a3c2e]/[0.08] rounded-full">
-                                        <span class="font-bold text-[#1a3c2e]">${{ $frame->price }}</span>
+                                        <span class="font-bold text-[#1a3c2e]">₱{{ $frame->price }}</span>
                                         <span class="text-sm text-gray-500">Frame</span>
                                     </div>
                                 @else
@@ -152,22 +152,22 @@
                                 <div class="flex items-center justify-between py-1">
                                     <span class="text-gray-500">Frame</span>
                                     <span class="font-medium text-[#1a3c2e]" id="frame-price-display">
-                                        ${{ $frame ? $frame->price : '0' }}
+                                        ₱{{ $frame ? $frame->price : '0' }}
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between py-1">
                                     <span class="text-gray-500">Lens</span>
-                                    <span class="font-medium text-[#1a3c2e]" id="lens-price-display">$0</span>
+                                    <span class="font-medium text-[#1a3c2e]" id="lens-price-display">₱0</span>
                                 </div>
                                 <div class="flex items-center justify-between py-1">
                                     <span class="text-gray-500">Accessory</span>
-                                    <span class="font-medium text-[#1a3c2e]" id="accessory-price-display">$0</span>
+                                    <span class="font-medium text-[#1a3c2e]" id="accessory-price-display">₱0</span>
                                 </div>
                                 <div class="border-t border-gray-100 pt-4 mt-4">
                                     <div class="flex items-center justify-between">
                                         <span class="text-base font-bold text-[#1a3c2e]">Total</span>
                                         <span class="text-2xl font-bold text-[#1a3c2e]" id="total-price-display">
-                                            ${{ $frame ? $frame->price : '0' }}
+                                            ₱{{ $frame ? $frame->price : '0' }}
                                         </span>
                                     </div>
                                     <div class="flex items-center justify-end gap-1.5 mt-2">
@@ -229,9 +229,9 @@
                 // ============================================================
                 function updatePriceDisplay() {
                     const total = state.framePrice + state.lensPrice + state.accessoryPrice;
-                    if (lensPriceDisplay) lensPriceDisplay.textContent = '$' + state.lensPrice;
-                    if (accessoryPriceDisplay) accessoryPriceDisplay.textContent = '$' + state.accessoryPrice;
-                    if (totalPriceDisplay) totalPriceDisplay.textContent = '$' + total;
+                    if (lensPriceDisplay) lensPriceDisplay.textContent = '₱' + state.lensPrice;
+                    if (accessoryPriceDisplay) accessoryPriceDisplay.textContent = '₱' + state.accessoryPrice;
+                    if (totalPriceDisplay) totalPriceDisplay.textContent = '₱' + total;
                     if (selectedLensDisplay) selectedLensDisplay.textContent = state.lensName;
                     if (selectedAccessoryDisplay) selectedAccessoryDisplay.textContent = state.accessoryName;
                 }
