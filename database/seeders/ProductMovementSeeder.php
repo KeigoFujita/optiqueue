@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Product;
@@ -49,7 +51,7 @@ class ProductMovementSeeder extends Seeder
             'movement_category' => 'initial_stock',
             'quantity' => $initialIn,
             'movement_date' => (clone $now)->subDays($daysAgo)->format('Y-m-d'),
-            'reference_id' => 'PO-INI-'.str_pad((string) $product->id, 4, '0', STR_PAD_LEFT),
+            'reference_id' => 'PO-INI-'.mb_str_pad((string) $product->id, 4, '0', STR_PAD_LEFT),
         ];
 
         $totalIn = $initialIn;
@@ -65,7 +67,7 @@ class ProductMovementSeeder extends Seeder
                 'movement_category' => 'purchase_order',
                 'quantity' => $extraQty,
                 'movement_date' => (clone $now)->subDays(max($daysAgo, 1))->format('Y-m-d'),
-                'reference_id' => 'PO-'.strtoupper(substr(md5((string) rand()), 0, 6)),
+                'reference_id' => 'PO-'.mb_strtoupper(mb_substr(md5((string) rand()), 0, 6)),
             ];
             $totalIn += $extraQty;
         }
@@ -90,7 +92,7 @@ class ProductMovementSeeder extends Seeder
                     'movement_category' => 'sale',
                     'quantity' => $saleQty,
                     'movement_date' => (clone $now)->subDays(max($daysAgo, 0))->format('Y-m-d'),
-                    'reference_id' => 'ORD-'.strtoupper(substr(md5((string) rand()), 0, 8)),
+                    'reference_id' => 'ORD-'.mb_strtoupper(mb_substr(md5((string) rand()), 0, 8)),
                 ];
                 $totalOut += $saleQty;
                 $remainingForOut -= $saleQty;
@@ -123,7 +125,7 @@ class ProductMovementSeeder extends Seeder
                 'movement_category' => $diff > 0 ? 'negative_adjustment' : 'positive_adjustment',
                 'quantity' => abs($diff),
                 'movement_date' => (clone $now)->subDays(1)->format('Y-m-d'),
-                'reference_id' => 'ADJ-'.str_pad((string) $product->id, 4, '0', STR_PAD_LEFT),
+                'reference_id' => 'ADJ-'.mb_str_pad((string) $product->id, 4, '0', STR_PAD_LEFT),
             ];
         }
 

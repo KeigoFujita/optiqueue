@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Mail\OrderStatusMail;
 use App\Models\Order;
 use App\Models\User;

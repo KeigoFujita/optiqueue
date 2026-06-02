@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Database\Factories\ProductMovementFactory;
@@ -55,19 +57,19 @@ class ProductMovement extends Model
         'reference_id',      // Optional: order ID, PO number, transfer slip, etc.
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'movement_date' => 'date',
-            'quantity' => 'integer',
-        ];
-    }
-
     /**
      * @return BelongsTo<Product, $this>
      */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'movement_date' => 'date',
+            'quantity' => 'integer',
+        ];
     }
 }

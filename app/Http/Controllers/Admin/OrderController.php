@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Mail\OrderStatusMail;
 use App\Models\Order;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -120,7 +123,7 @@ class OrderController extends Controller
         try {
             $order->load('orderDetails.product');
             Mail::to($order->customer?->email)->send(new OrderStatusMail($order, $oldStatus));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to send status update email: '.$e->getMessage());
         }
 

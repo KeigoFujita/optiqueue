@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Mail\OrderConfirmationMail;
 use App\Mail\OtpMail;
 use App\Models\Customer;

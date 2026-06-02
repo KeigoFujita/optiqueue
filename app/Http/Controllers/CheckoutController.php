@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SendOtpRequest;
@@ -12,6 +14,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductMovement;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use RuntimeException;
 
 class CheckoutController extends Controller
 {
@@ -106,7 +110,7 @@ class CheckoutController extends Controller
         // Send OTP via email using Mailtrap/SMTP
         try {
             Mail::to($email)->send(new OtpMail($otp, $customer->name ?? 'Valued Customer'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to send OTP email: '.$e->getMessage());
         }
 
@@ -141,7 +145,7 @@ class CheckoutController extends Controller
         // Send OTP via email using Mailtrap/SMTP
         try {
             Mail::to($email)->send(new OtpMail($otp, $customer->name ?? 'Valued Customer'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to resend OTP email: '.$e->getMessage());
         }
 
@@ -228,7 +232,7 @@ class CheckoutController extends Controller
             $totalAmount = $framePrice + $lensPrice + $accessoryPrice;
 
             // 3. Create order
-            $orderNo = 'ORD-'.strtoupper(uniqid());
+            $orderNo = 'ORD-'.mb_strtoupper(uniqid());
             $order = Order::create([
                 'order_no' => $orderNo,
                 'customer_id' => $customer->id,
@@ -264,7 +268,7 @@ class CheckoutController extends Controller
                     ->decrement('stocks', $item['quantity']);
 
                 if ($updated === 0) {
-                    throw new \RuntimeException(
+                    throw new RuntimeException(
                         "Insufficient stock for product '{$product->name}': only {$product->stocks} left, requested {$item['quantity']}."
                     );
                 }
@@ -285,7 +289,7 @@ class CheckoutController extends Controller
             try {
                 $order->load('customer', 'orderDetails.product');
                 Mail::to($order->customer?->email)->send(new OrderConfirmationMail($order));
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error('Failed to send order confirmation email: '.$e->getMessage());
             }
 
@@ -294,7 +298,7 @@ class CheckoutController extends Controller
                 'message' => 'Order placed successfully!',
                 'order_no' => $orderNo,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             Log::error('Order placement failed: '.$e->getMessage());

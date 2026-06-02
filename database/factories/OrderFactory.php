@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Customer;
@@ -13,7 +15,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'order_no' => 'ORD-'.strtoupper(uniqid()),
+            'order_no' => 'ORD-'.mb_strtoupper(uniqid()),
             'customer_id' => Customer::factory(),
             'total_amount' => fake()->numberBetween(500, 5000),
             'status' => fake()->randomElement(['pending', 'processing', 'ready', 'picked-up']),
