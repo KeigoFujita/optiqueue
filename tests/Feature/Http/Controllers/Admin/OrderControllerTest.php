@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
+covers(App\Http\Controllers\Admin\OrderController::class);
+
 beforeEach(function () {
     /** @var TestCase $this */
     $this->admin = User::factory()->create();

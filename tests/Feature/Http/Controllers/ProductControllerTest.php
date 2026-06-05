@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Models\Product;
 
+covers(App\Http\Controllers\ProductController::class);
+
 describe('ProductController', function () {
 
     describe('about()', function () {

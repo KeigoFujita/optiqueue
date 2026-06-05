@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Models\User;
 
+covers(App\Http\Controllers\Admin\AuthController::class);
+
 describe('AuthController', function () {
 
     describe('showLoginForm()', function () {

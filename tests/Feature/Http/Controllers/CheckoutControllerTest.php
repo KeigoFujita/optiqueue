@@ -9,6 +9,8 @@ use App\Models\Product;
 use App\Models\ProductMovement;
 use Illuminate\Support\Facades\Mail;
 
+covers(App\Http\Controllers\CheckoutController::class);
+
 describe('CheckoutController', function () {
 
     describe('index()', function () {

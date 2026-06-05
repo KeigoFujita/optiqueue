@@ -7,6 +7,8 @@ use App\Models\ProductMovement;
 use App\Models\User;
 use Tests\TestCase;
 
+covers(App\Http\Controllers\Admin\InventoryController::class);
+
 beforeEach(function () {
     /** @var TestCase $this */
     $this->admin = User::factory()->create();

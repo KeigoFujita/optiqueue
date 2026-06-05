@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\User;
 use Tests\TestCase;
 
+covers(App\Http\Controllers\Admin\DashboardController::class);
+
 beforeEach(function () {
     /** @var TestCase $this */
     $this->admin = User::factory()->create();

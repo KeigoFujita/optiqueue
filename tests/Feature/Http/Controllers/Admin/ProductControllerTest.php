@@ -9,6 +9,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
+covers(App\Http\Controllers\Admin\ProductController::class);
+
 beforeEach(function () {
     /** @var TestCase $this */
     $this->admin = User::factory()->create();
