@@ -45,6 +45,18 @@ jobs:
           php-version: ${{ inputs.php-version }}
           coverage: ${{ inputs.coverage && 'pcov' || 'none' }}
 
+      - name: Get npm Cache Directory
+        id: npm-cache
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+
+      - name: Cache npm Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
       - name: Build Frontend Assets
         run: |
           npm ci --ignore-scripts
