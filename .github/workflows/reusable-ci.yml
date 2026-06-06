@@ -36,6 +36,9 @@ jobs:
       DB_PASSWORD: ""
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Bootstrap Application
         uses: ./.github/actions/setup-laravel
         with:
