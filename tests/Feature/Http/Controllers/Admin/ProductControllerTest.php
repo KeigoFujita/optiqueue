@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\ProductController;
 use App\Models\Product;
 use App\Models\ProductMovement;
 use App\Models\User;
@@ -9,7 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-covers(App\Http\Controllers\Admin\ProductController::class);
+covers(ProductController::class);
 
 beforeEach(function () {
     /** @var TestCase $this */

@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\InventoryController;
 use App\Models\Product;
 use App\Models\ProductMovement;
 use App\Models\User;
 use Tests\TestCase;
 
-covers(App\Http\Controllers\Admin\InventoryController::class);
+covers(InventoryController::class);
 
 beforeEach(function () {
     /** @var TestCase $this */

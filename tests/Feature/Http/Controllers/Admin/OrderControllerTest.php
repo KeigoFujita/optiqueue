@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\OrderController;
 use App\Mail\OrderStatusMail;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
-covers(App\Http\Controllers\Admin\OrderController::class);
+covers(OrderController::class);
 
 beforeEach(function () {
     /** @var TestCase $this */
