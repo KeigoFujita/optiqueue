@@ -10,6 +10,9 @@ jobs:
   security-check:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        
       - name: Bootstrap Environment
         uses: ./.github/actions/setup-laravel
         with:
