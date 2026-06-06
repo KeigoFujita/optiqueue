@@ -45,6 +45,11 @@ jobs:
           php-version: ${{ inputs.php-version }}
           coverage: ${{ inputs.coverage && 'pcov' || 'none' }}
 
+      - name: Build Frontend Assets
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+
       - name: Run Tests
         if: ${{ !inputs.coverage }}
         run: php artisan test --parallel
