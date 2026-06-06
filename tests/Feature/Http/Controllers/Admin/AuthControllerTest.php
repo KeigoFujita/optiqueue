@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\AuthController;
 use App\Models\User;
 
-covers(App\Http\Controllers\Admin\AuthController::class);
+covers(AuthController::class);
 
 describe('AuthController', function () {
 

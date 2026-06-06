@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\CheckoutController;
 use App\Mail\OrderConfirmationMail;
 use App\Mail\OtpMail;
 use App\Models\Customer;
@@ -9,7 +10,7 @@ use App\Models\Product;
 use App\Models\ProductMovement;
 use Illuminate\Support\Facades\Mail;
 
-covers(App\Http\Controllers\CheckoutController::class);
+covers(CheckoutController::class);
 
 describe('CheckoutController', function () {
 

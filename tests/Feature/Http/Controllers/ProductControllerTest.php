@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ProductController;
 use App\Models\Product;
 
-covers(App\Http\Controllers\ProductController::class);
+covers(ProductController::class);
 
 describe('ProductController', function () {
 

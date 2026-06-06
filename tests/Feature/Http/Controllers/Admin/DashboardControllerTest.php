@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Tests\TestCase;
 
-covers(App\Http\Controllers\Admin\DashboardController::class);
+covers(DashboardController::class);
 
 beforeEach(function () {
     /** @var TestCase $this */
