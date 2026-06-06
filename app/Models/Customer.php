@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property \Illuminate\Support\Carbon|null $otp_expires_at
+ * @property \Illuminate\Support\Carbon|null $verified_at
+ */
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */
