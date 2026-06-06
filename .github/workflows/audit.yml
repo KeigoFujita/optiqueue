@@ -1,0 +1,19 @@
+name: 'Security: Nightly Audit'
+
+on:
+  schedule:
+    # Triggered at exactly 02:00 UTC daily
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allows manual trigger execution from GitHub UI if needed
+
+jobs:
+  security-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bootstrap Environment
+        uses: ./.github/actions/setup-laravel
+        with:
+          php-version: '8.3'
+
+      - name: Check Composer Vulnerabilities
+        run: composer audit

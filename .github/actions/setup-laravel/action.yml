@@ -1,0 +1,47 @@
+name: 'Setup Laravel Environment'
+description: 'Bootstraps PHP, extensions, composer dependencies, and environment keys.'
+
+inputs:
+  php-version:
+    description: 'PHP Version to target'
+    required: false
+    default: '8.3'
+  coverage:
+    description: 'Coverage driver (none, pcov, xdebug)'
+    required: false
+    default: 'none'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP Environment
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        extensions: mbstring, xml, ctype, iconv, mysql, bcmath, zip
+        coverage: ${{ inputs.coverage }}
+
+    - name: Get Composer Cache Directory
+      id: composer-cache
+      shell: bash
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache Composer Dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install Dependencies
+      shell: bash
+      run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+    - name: Prepare Environment
+      shell: bash
+      run: |
+        cp .env.example .env
+        php artisan key:generate

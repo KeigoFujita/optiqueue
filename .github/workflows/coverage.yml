@@ -1,0 +1,11 @@
+name: Coverage Report
+
+on:
+  workflow_dispatch:
+
+jobs:
+  coverage:
+    uses: ./.github/workflows/reusable-ci.yml
+    with:
+      php-version: '8.3'
+      coverage: true

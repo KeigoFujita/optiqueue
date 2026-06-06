@@ -1,0 +1,58 @@
+# Reusable CI pipeline for running the test suite across PHP versions
+# Called by ci.yml via workflow_call. Spins up MySQL, bootstraps Laravel, runs Pest.
+name: 'Reusable Testing Matrix'
+
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        required: true
+        type: string
+      coverage:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: 'testing'
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: testing
+      DB_USERNAME: root
+      DB_PASSWORD: ""
+
+    steps:
+      - name: Bootstrap Application
+        uses: ./.github/actions/setup-laravel
+        with:
+          php-version: ${{ inputs.php-version }}
+          coverage: ${{ inputs.coverage && 'pcov' || 'none' }}
+
+      - name: Run Tests
+        if: ${{ !inputs.coverage }}
+        run: php artisan test --parallel
+
+      - name: Run Tests with Coverage
+        if: ${{ inputs.coverage }}
+        run: php artisan test --coverage-clover coverage.xml
+
+      - name: Upload Coverage Report
+        if: ${{ inputs.coverage }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
