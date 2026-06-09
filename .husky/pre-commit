@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# 1. Run Pint and Larastan ONLY on the modified, staged files
+npx lint-staged
+
+# 2. Run your Pest tests (Fast/Parallel Unit tests) to ensure no functionality broke
+php artisan test --parallel
