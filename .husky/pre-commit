@@ -1,0 +1,5 @@
+# 1. Run Pint and Larastan ONLY on the modified, staged files
+npx lint-staged
+
+# 2. Run Pest tests (Fast/Parallel tests) for regression testing
+php artisan test --parallel
