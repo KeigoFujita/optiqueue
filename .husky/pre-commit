@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # 1. Run Pint and Larastan ONLY on the modified, staged files
 npx lint-staged
 
